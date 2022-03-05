@@ -139,3 +139,71 @@
   也是其广受欢迎的原因之一
 
 #### 3. 浏览器对 ECMAScript 的支持
+
+### 1.2.2 DOM
+
+- 文档对象模型（DOM，Document Object Model）
+
+  是一个应用编程接口（API）
+
+  用于在 HTML 中使用扩展的 XML
+
+- DOM 将整个页面抽象为一组分层节点
+
+  HTML 或 XML 页面的每个组成部分都是一种节点，包含不同的数据
+
+- 比如下面的 HTML 页面
+
+```
+<html>
+	<head>
+		<title>Sample Page</title>
+	</head>
+	<body>
+		<p>Hello World</p>
+	</body>
+</html>
+```
+
+- 这些代码通过 DOM 可以表示为一组分层节点
+
+![image-20220305083443222](C:\Users\86189\AppData\Roaming\Typora\typora-user-images\image-20220305083443222.png)
+
+- DOM 通过创建表示文档的树
+
+  让开发者可以随心所欲地控制网页的内容和结构
+
+- 使用 DOM API，可以轻松地删除、添加、替换、修改节点
+
+#### 1. 为什么 DOM 是必需的
+
+- 为了保持 Web 跨平台的本性，防止人们面向浏览器开发网页
+
+  万维网联盟（W3C，World Wide Web Consortium）开始了指制定 DOM 标准的进程
+
+#### 2. DOM 级别
+
+- 1998 年 10 月，DOM Level1 成为 W3C 的推荐标准
+
+  这个规范由两个模块组成
+
+  - DOM Core：提供了一种映射 XML 文档，从而方便访问和操作文档任意部分的方式
+  - DOM HTML：扩展了 DOM Core，并增加了特定于 HTML 的对象和方法
+
+- 注意：
+
+  - DOM 并非只能通过 JavaScript 访问
+
+    而且确实被其它很多语言实现了
+
+  - 不过对于浏览器来说
+
+    DOM 就是使用 ECMAScript 实现的
+
+    如今已经成为 JavaScript 语言的一大组成部分
+
+- DOM Level 1 的目标是映射文档结构
+
+  而 DOM Level 2 的目标则宽泛得多
+
+  - 
