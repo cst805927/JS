@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Example HTML Page</title>
+    <link rel="preload" href="gibberish.js" />
+  </head>
+  <body>
+    <!-- 这里是页面内容 -->
+    <script>
+      const script = document.createElement("script");
+      script.src = "gibberish.js";
+      script.async = "false";
+      document.head.appendChild(script);
+    </script>
+  </body>
+</html>
