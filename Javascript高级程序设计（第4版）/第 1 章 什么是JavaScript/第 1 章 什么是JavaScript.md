@@ -141,3 +141,29 @@
 
 ### 1.2.3 BOM
 
+- BOM 是什么
+  - 浏览器对象模型
+- 使用 BOM 能做什么
+  - 访问和操作浏览器的窗口
+- BOM 主要针对的是什么
+  - 浏览器窗口
+  - 子窗口（frame）
+
+- BOM 包含什么内容
+  - 弹出新浏览器窗口的能力
+  - 移动、缩放、关闭浏览器窗口的能力
+  - navigator 对象，浏览器的信息
+  - location 对象，浏览器加载页面的信息
+  - screen 对象，用户屏幕分辨率的信息
+  - performance 对象，浏览器内存占用、导航行为、时间统计的信息
+  - 对 cookie 的支持
+  - 其它自定义对象，如 XMLHttpRequest 、 IE 的 ActiveXObject
+
+## 1.4 小结
+
+- JavaScript 是什么
+  - JavaScript 是一门用来与网页交互的脚本语言
+- JavaScript 包含哪几个组成部分，每个部分用来做什么
+  - ECAMScript：用来提供核心功能
+  - 文档对象模型（DOM）：用来与网页内容交互
+  - 浏览器对象模型（BOM）：用来与浏览器交互
