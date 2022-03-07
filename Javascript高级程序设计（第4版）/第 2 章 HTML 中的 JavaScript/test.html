@@ -7,9 +7,30 @@
   </head>
   <body>
     <!-- 这里是页面内容 -->
-    <script src="mainA.js"></script>
-    <script src="component1.js"></script>
-    <script src="component2.js"></script>
-    <script src="component3.js"></script>
+    <script>
+      var name = "Nicholas";
+      let age = 36;
+    </script>
+    <script>
+      // 脚本不确定页面是否已经声明了同名变量
+      // 那脚本可以假设还没有声明过
+
+      // name被限制在if{}块的作用域内
+      if (typeof name === "undefined") {
+        let name;
+      }
+      // 因此这个赋值是全局赋值
+      name = "Matt";
+
+      try {
+        // 如果age没有声明过，这里会报错
+        console.log(age); // 36
+      } catch (error) {
+        let age;
+      }
+      // age被限制在catch()块的作用域内
+      // 因此这个赋值是全局赋值
+      age = 26;
+    </script>
   </body>
 </html>
