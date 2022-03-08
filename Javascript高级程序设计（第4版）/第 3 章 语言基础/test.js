@@ -1,5 +1,17 @@
-let message; // 这个变量被声明了，只是值为undefined
-// 确保没有声明过这个变量
-// let age;
-console.log(message); // "undefined"
-console.log(age); // 报错
+function printRaw(strings) {
+    console.log('Actual characters:');
+    for (const string of strings) {
+        console.log(string);
+    }
+    console.log('Escaped characters:');
+    for (const rawString of strings.raw) {
+        console.log(rawString);
+    }
+}
+printRaw `\u00A9${'and'}\n`;
+// Actual characters:
+// ©
+// (换行符)
+// Escaped characters:
+// \u00A9
+// \n
