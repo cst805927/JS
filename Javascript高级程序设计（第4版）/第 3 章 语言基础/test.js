@@ -1,17 +1,12 @@
-class FooSplitter {
-    static[Symbol.split](target) {
-        return target.split('foo');
-    }
+let o = {
+    foo: 'bar'
+};
+with(o) {
+    console.log(foo); // bar
 }
-console.log('barfoobaz'.split(FooSplitter));
-// ['bar', 'baz']
-class StringSplitter {
-    constructor(str) {
-            this.str = str;
-        }
-        [Symbol.split](target) {
-            return target.split(this.str);
-        }
+o[Symbol.unscopables] = {
+    foo: true
+};
+with(o) {
+    console.log(foo); // ReferenceError: foo is not defined
 }
-console.log('barfoobaz'.split(new StringSplitter('foo')));
-// ['bar', 'baz']
