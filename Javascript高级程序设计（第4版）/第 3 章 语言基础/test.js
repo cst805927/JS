@@ -1,1 +1,1 @@
-let myObject = preferredObject || backupObject;
+let result = 2 - 1;
