@@ -1,11 +1,17 @@
-class Bar {}
-class Baz extends Bar {
-    static[Symbol.hasInstance]() {
-        return false;
+class FooSplitter {
+    static[Symbol.split](target) {
+        return target.split('foo');
     }
 }
-let b = new Baz();
-console.log(Bar[Symbol.hasInstance](b)); // true
-console.log(b instanceof Bar); // true
-console.log(Baz[Symbol.hasInstance](b)); // false
-console.log(b instanceof Baz); // false
+console.log('barfoobaz'.split(FooSplitter));
+// ['bar', 'baz']
+class StringSplitter {
+    constructor(str) {
+            this.str = str;
+        }
+        [Symbol.split](target) {
+            return target.split(this.str);
+        }
+}
+console.log('barfoobaz'.split(new StringSplitter('foo')));
+// ['bar', 'baz']
