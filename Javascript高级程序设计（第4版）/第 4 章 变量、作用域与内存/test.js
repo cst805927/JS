@@ -1,4 +1,3 @@
-let element = document.getElementById("some_element");
-let myObject = new Object();
-myObject.element = element;
-element.someObject = myObject;
+let vectorList = new Array(100);
+let vector = new Vector();
+vectorList.push(vector);
