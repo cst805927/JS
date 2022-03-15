@@ -1,13 +1,6 @@
-function digit(i) {
-    if (i = 2) {
-        i++;
-    } else if (i == 3) {
-        i += 2;
-    } else if (i == 4) {
-        ++i;
-    }
-    return 1;
-}
-for (var i = 1; i < 5; iH + ) {
-    console.log(digit(i));
+let text = "this has been a short summer";
+let pattern = /(..)or(.)/g;
+if (pattern.test(text)) {
+    console.log(RegExp.$1); // sh 
+    console.log(RegExp.$2); // t
 }
