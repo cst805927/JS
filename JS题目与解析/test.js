@@ -1,8 +1,4 @@
-function reverse(str) {
-    let result = "",
-        begin = str.length - 1;
-    for (let i = begin; i >= 0; i--) {
-        result += str[i];
-    }
-    return result;
-}
+let str = "get-element-by-id";
+str.replace(/-([a-z])/g, function (match, p1, index, input) {
+    return p1.toUpperCase();
+});
