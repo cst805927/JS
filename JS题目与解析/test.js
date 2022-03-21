@@ -1,4 +1,6 @@
-let str = "get-element-by-id";
-str.replace(/-([a-z])/g, function (match, p1, index, input) {
-    return p1.toUpperCase();
-});
+function getMaxMin (arr) {
+    const length = arr.length;
+    if (!arr || length < 1) {
+        return;
+    }
+}
