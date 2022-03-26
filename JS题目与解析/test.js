@@ -1,1 +1,3 @@
-console.log(Array(50).fill(0).map((item, index) => index));
+function deepCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
