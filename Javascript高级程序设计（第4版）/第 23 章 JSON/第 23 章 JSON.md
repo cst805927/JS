@@ -7,7 +7,6 @@
   - 解析JSON 
 
   - JSON序列化 
-
 - 理解JSON最关键的一点是要把它当成一种什么？
   - 数据格式
     - 而不是编程语言。
@@ -18,6 +17,14 @@
   - 不是
     - 它是一种通用数据格式
     - 很多语言都有解析和序列化JSON的内置能力
+- JSON格式的数据与XML格式的数据相比，有哪些优势?
+  - (1）语法格式更简单。
+  - (2）层次结构更清晰。
+
+  - (3）所用字符数更少。
+
+  - (4）数据解析更直接。
+
 
 ## **23.1** 语法
 
@@ -58,6 +65,17 @@
     - （单引号会导致语法错误）。 
 - 布尔值和null本身是否是有效的JSON值？
   - 是
+- 数字和字符串需要遵守哪些规范，才能应用到 JSON 中？
+  - 数字
+    - 不能有前导零，
+
+    - 不能省略浮点数整数部分和小数部分中的零，
+
+  - 字符串
+    - 必须用双引号包裹，
+    - 可以是任意数量的 Unicode字符，
+    - 不能包含双引号(")、反斜线\
+
 
 ### **23.1.2** 对象 
 
@@ -115,7 +133,7 @@ let object = {
 
 - 为什么整个JSON对象中有两个属性都叫"name"是允许的？
   - 因为它们属于两个不同的对象
-- 同一个对象中是否不允许出现两个相同的属性？
+- 同一个对象中是否允许出现两个相同的属性？
   - 不允许 
 
 ### **23.1.3** 数组
@@ -280,6 +298,23 @@ let bookCopy = JSON.parse(jsonText);
 - 如果给JSON.parse()传入的JSON字符串无效，则会发生什么？
   - 导致抛出错误
 
+#### 深拷贝
+
+- 用JSON对象执行深拷贝需要哪几个前置条件？
+  - 属性值不能是undefined、NaN、Infinity;
+  - 属性值不能是函数、变量、对象实例、正则表达式。
+- 用JSON对象实现深拷贝时，能使用什么数据类型？
+  - 一些简单的数据类型
+- 怎么用JSON对象执行深拷贝?
+
+```
+function deepCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+```
+
+
+
 ### **23.2.2** 序列化选项 
 
 - JSON.stringify()方法除了要序列化的对象，
@@ -347,7 +382,9 @@ let book = {
 let jsonText = JSON.stringify(book, (key, value) => {
     switch (key) {
         case "authors":
-            return value.join(",") case "year": return 5000;
+            return value.join(",");
+        case "year": 
+        	return 5000;
         case "edition":
             return undefined;
         default:
@@ -373,6 +410,21 @@ let jsonText = JSON.stringify(book, (key, value) => {
   - 要序列化的对象
 
     所包含的所有对象，
+
+
+- 函数过滤器会遍历JSON 数据中的数组，
+
+  在函数中是否能操纵它们的键和值？
+
+  - 能
+
+- 函数过滤器遍历数组中的元素，
+
+  如果返回 undefined，会执行什么操作？
+
+  - 不会被忽略，
+
+    而是被替换为null。
 
 - 如果数组中包含多个具有这些属性的对象，
 
@@ -411,10 +463,11 @@ let jsonText = JSON.stringify(book, null, 4);
 - 最大缩进值为什么？
   - 10
   - 大于10的值会自动设置为10。 
-
 - 如果缩进参数是一个字符串而非数值，那么JSON字符串会怎么缩进？
   - 使用字符串来缩进，
-- 是否可以将缩进字符设置为Tab或任意字符，如两个连字符： 
+- 是否可以将缩进字符设置为Tab或任意字符，如两个连字符?
+  - 可以 
+
 
 ```
 let jsonText = JSON.stringify(book, null, "--" );
@@ -472,7 +525,7 @@ let jsonText = JSON.stringify(book);
 - 如果对象被嵌入在另一个对象中，返回undefined会导致什么？ 
   - 导致值变成null；
 
-- 如果是顶级对象，则本身就是什么值？
+- 如果是顶级对象，则返回undefined会导致本身是什么值？
   - undefined 
 
 - 箭头函数是否能用来定义toJSON()方法？为什么？
@@ -536,7 +589,9 @@ let book = {
     releaseDate: new Date(2017, 11, 1)
 };
 let jsonText = JSON.stringify(book);
-let bookCopy = JSON.parse(jsonText, (key, value) => key == "releaseDate" ? new Date(value) : value);
+
+let bookCopy = JSON.parse(jsonText, (key, value) => 	key == "releaseDate" ? new Date(value) : value);
+
 alert(bookCopy.releaseDate.getFullYear());
 ```
 
@@ -548,7 +603,7 @@ alert(bookCopy.releaseDate.getFullYear());
 - 虽然XML也能胜任同样的角色，但JSON的优势？
   - 更简洁，
   - JavaScript支持也更好。
-  - 更重要的是，所有浏览器都已经原生支持全局JSON对象。 
+  - 所有浏览器都已经原生支持全局JSON对象。 
 
 - ECMAScript 5定义了原生JSON对象，用于什么？
   - JSON.stringify()
