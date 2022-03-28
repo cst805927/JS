@@ -1,3 +1,5 @@
-function deepCopy(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
+(function (x) {
+    return (function (y) {
+        console.log(x + y);
+    })(20)
+})(10);
