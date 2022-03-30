@@ -1,22 +1,9 @@
-// A
-// / \
-// B C
-// /\ /\
-// D E F G 
-let A = new Promise((resolve, reject) => {
-    console.log('A');
-    resolve();
-});
-let B = A.then(() => console.log('B'));
-let C = A.then(() => console.log('C'));
-B.then(() => console.log('D'));
-B.then(() => console.log('E'));
-C.then(() => console.log('F'));
-C.then(() => console.log('G'));
-// A
-// B
-// C
-// D
-// E 
-// F 
-// G
+async function sleep(delay) {
+	return new Promise((resolve) => setTimeout(resolve, delay));
+}
+async function foo() {
+	const t0 = Date.now();
+	await sleep(1500); // 暂停约1500毫秒
+	console.log(Date.now() - t0);
+}
+foo(); // 1502
