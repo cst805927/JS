@@ -1,9 +1,11 @@
-async function sleep(delay) {
-	return new Promise((resolve) => setTimeout(resolve, delay));
+function fooPromiseExecutor(resolve, reject) {
+	setTimeout(reject, 1000, 'bar');
 }
 async function foo() {
-	const t0 = Date.now();
-	await sleep(1500); // 暂停约1500毫秒
-	console.log(Date.now() - t0);
+	await new Promise(fooPromiseExecutor);
 }
-foo(); // 1502
+foo();
+// Uncaught (in promise) bar
+// foo
+// async function (async)
+// foo
