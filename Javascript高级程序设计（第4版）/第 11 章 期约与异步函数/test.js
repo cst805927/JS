@@ -1,28 +1,22 @@
-console.log('begin synchronous execution');
-try {
-    throw Error('foo');
-} catch (e) {
-    console.log('caught error', e);
-}
-console.log('continue synchronous execution');
-
-// begin synchronous execution
-// caught error Error: foo
-// continue synchronous execution 
-
-new Promise((resolve, reject) => {
-
-    console.log('begin asynchronous execution');
-
-    reject(Error('bar'));
-}).catch((e) => {
-
-    console.log('caught error', e);
-}).then(() => {
-
-    console.log('continue asynchronous execution');
+// A
+// / \
+// B C
+// /\ /\
+// D E F G 
+let A = new Promise((resolve, reject) => {
+    console.log('A');
+    resolve();
 });
-
-// begin asynchronous execution
-// caught error Error: bar
-// continue asynchronous execution
+let B = A.then(() => console.log('B'));
+let C = A.then(() => console.log('C'));
+B.then(() => console.log('D'));
+B.then(() => console.log('E'));
+C.then(() => console.log('F'));
+C.then(() => console.log('G'));
+// A
+// B
+// C
+// D
+// E 
+// F 
+// G
