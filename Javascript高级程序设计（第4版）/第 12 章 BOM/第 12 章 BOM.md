@@ -157,7 +157,8 @@ var newValue = window.oldValue;
   - 返回值的单位是CSS像素。 
 
 - 如何移动窗口？
-  - 使用moveTo()和moveBy()方法
+  - moveTo()
+  - moveBy()
 - moveTo()接收什么参数？
   - 要移动到的新位置的绝对坐标
 - moveBy()接收什么参数？
@@ -240,19 +241,23 @@ window.moveBy(-50, 0);
 ### **12.1.4** 窗口大小 
 
 - outerWidth和outerHeight返回什么？
-  - 浏览器窗口自身的大小 
-
+  - 浏览器窗口
+    - 自身的大小 
+  
 - innerWidth和innerHeight返回什么？
 
-  - 浏览器窗口中页面视口的大小
+  - 浏览器窗口中
 
+    - 页面视口的大小
+    
     （不包含浏览器边框和工具栏）
 
 - document.documentElement.clientWidth和 
 
   document.documentElement.clientHeight返回什么？
 
-  - 页面视口的宽度和高度。 
+  - 页面视口的
+    - 宽度和高度。 
 
 - 如何确定页面视口的大小？
 
@@ -288,7 +293,7 @@ if (typeof pageWidth != "number") {
   - window.innerHeight
   - 即屏幕上页面可视区域的大小。
 
-- 在什么中提供了相同的信息？
+- 什么也提供了视口的大小？
 
   - document.documentElement.clientWidth
   - document.documentElement.clientHeight
@@ -297,7 +302,9 @@ if (typeof pageWidth != "number") {
 
 - 在其他移动浏览器中，document.documentElement.clientWidth和 
 
-  document.documentElement.clientHeight返回什么？
+  document.documentElement.clientHeight
+
+  返回什么？
 
   - 布局视口的大小
     - 即渲染页面的实际大小。
@@ -323,8 +330,10 @@ if (typeof pageWidth != "number") {
 - 可以使用什么方法调整窗口大小？
   - resizeTo()
   - resizeBy()
+  
 - resizeTo()接收什么参数？
   - 新的宽度和高度值
+  
 - resizeBy()接收什么参数？
   - 宽度和高度各要缩放多少。
 
@@ -340,16 +349,15 @@ window.resizeTo(300, 300);
 
 ```
 
-- 缩放窗口的方法可能会被浏览器禁用，而且在 
-
-  某些浏览器中默认是禁用的。同样，
+- 缩放窗口的方法是否可能会被浏览器禁用？
+  - 可能
 
 - 缩放窗口的方法只能应用到哪一层的window对象？
   - 最上层 
 
 ### **12.1.5** 视口位置 
 
-- 用户可以通过做什么在有限的视口中查看文档？
+- 用户如何在有限的视口中查看文档？
   - 滚动
 - 度量文档相对于视口滚动距离的属性有什么？
   - 两对属性，返回相等的值：
