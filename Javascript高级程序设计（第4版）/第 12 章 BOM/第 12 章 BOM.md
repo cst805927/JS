@@ -1246,8 +1246,8 @@ location.assign("http://www.wrox.com");
 
 - 这行代码会执行什么操作？
 
-  - 立即启动导航到新URL的操作，
-  - 同时在浏览器历史记录中增加一条记录。
+  - 导航到新URL
+  - 在浏览器历史记录中增加一条记录。
 
 - 如果给location.href或window.location设置一个URL， 
 
@@ -1255,17 +1255,22 @@ location.assign("http://www.wrox.com");
 
   - 以同一个URL值调用assign()方法。
 
-- 下面两行代码都会执行与显式调用assign()一样的操作： 
+- 下面代码与显式调用assign()结果一样
 
 ```
 window.location = "http://www.wrox.com";
 location.href = "http://www.wrox.com";
 ```
 
-- 修改location对象的属性是否会修改当前加载的页面？
-  - 会
-- 什么属性被设置为新值之后都会修改当前URL？
-  - hash、search、hostname、pathname和port
+- 修改location对象的属性会发生什么？
+
+  - 修改当前加载的页面
+
+- hash、search、hostname、pathname和port属性
+
+  被设置为新值之后会发生什么？
+
+  - 修改当前URL
 
 ```
 // 假设当前URL为http://www.wrox.com/WileyCDA/ 
@@ -1349,11 +1354,11 @@ location.port = 8080;
     - 除非手动输入完整的URL。 
 
 - reload()能做什么？
-  - 它能重新加载当前显示的页面。 
+  - 重新加载当前显示的页面。 
 
 - 如果页面自上次请求以来没有修改过，
 
-  浏览器可能会怎么加载页面？
+  浏览器会怎么加载页面？
 
   - 从缓存中加载页面
 
@@ -1368,7 +1373,7 @@ location.reload(true);
  // 重新加载，从服务器加载
 ```
 
-- 脚本中位于reload()调用之后的代码是否执行？
+- 脚本中位于reload()之后的代码是否执行？
   - 可能执行也可能不执行，
   - 这取决于网络延迟和系统资源等因素。
 - 最好把reload()作为哪一行代码？
@@ -1439,7 +1444,7 @@ alert(hasPlugin("QuickTime"));
 
 - 这个hasPlugin()方法接收哪一个参数？
 
-  - 即待检测插件的名称。
+  - 插件的名称。
 
 - 第一步是做什么？
 
@@ -1488,7 +1493,7 @@ alert(hasPlugin("QuickTime"));
 
 - 是否能用IE11中的ActiveXObject来检测特性？
   - 不能
-  -  IE11中的ActiveXObject也从DOM中隐身了
+  -  IE11中的ActiveXObject从DOM中隐身了
 
 #### 旧版本**IE**中的插件检测
 
@@ -1605,19 +1610,17 @@ alert(hasQuickTime());
 
 - registerProtocolHandler()方法可以做什么？
 
-  - 把一个网站注册为处理某种特定类型信息应用程序。
+  - 把一个网站注册为
 
-- 可以借助这个方法对Web应用程序做什么？
-
-  - 将Web应用程序注册为默认应用程序。 
-
+    处理某种特定类型信息应用程序。
 
 - registerProtocolHandler()方法必须传入哪3个参数？
-  - 要处理的协议（如"mailto"或"ftp"）、
+
+  
+  - 协议（如"mailto"或"ftp"）、
   - 处理该协议的URL
   - 应用名称
-
-- 如何把一个Web应用程序注册为默认邮件客户端？
+  
 
 ```
 navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%s", "Some Mail Client");
@@ -1625,7 +1628,7 @@ navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%
 
 - 这个例子为什么协议注册了一个处理程序？
   - "mailto"协议
-- 这样邮件地址就可以怎么打开？
+- 邮件地址可以怎么打开？
   - 通过指定的Web应用程序打开。
 - 第二个参数是负责做什么的？
   - 处理请求的URL，
@@ -1636,7 +1639,7 @@ navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%
 
 - 这个对象中保存的是什么？
   - 客户端能力信息，
-    - 浏览器窗口外面的客户端显示器的信息，
+    - 浏览器窗口的客户端显示器的信息，
     - 比如像素宽度和像素高度。
 - 每个浏览器都会在screen对象上暴露不同的属性。
 - 下表总结了这些属性。
@@ -1648,15 +1651,21 @@ navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%
 ## **12.5** **history**对象
 
 - history对象表示什么？
-  - 当前窗口首次使用以来用户的导航历史记录。
+  - 当前窗口首次使用以来
+  
+    用户的导航历史记录。
+  
 - 每个window是否都有自己的history对象？
   - 是
   - 因为history是window的属性， 
 
 - 出于安全考虑，history对象是否会暴露用户访问过的URL？
   - 不会
+  
 - 可以通过history做什么？ 
-  - 不知道实际URL的情况下前进和后退。
+  - 不知道实际URL的情况下
+  
+    前进和后退。
 
 ### **12.5.1** 导航 
 
@@ -1671,13 +1680,11 @@ navigator.registerProtocolHandler("mailto", "http://www.somemailclient.com?cmd=%
 
     - 表示前进或后退多少步。
 
-      - 负值表示在历史记录中后退
+      - 负值表示后退
 
-        （类似点击浏览器的“后退”按钮），
+      - 正值表示前进
 
-      - 正值表示在历史记录中前进
-
-        （类似点击浏览器的“前进”按钮）
+        
 
 ```
 // 后退一页 
@@ -1696,9 +1703,7 @@ history.go(2);
 
   这种情况下浏览器会执行什么操作？
 
-  - 导航到历史中包含该字符串的第一个位置。
-
-- 最接近的位置可能涉及后退，也可能涉及前进。
+  - 导航到该字符串的第一个位置。
 
 - 如果历史记录中没有匹配的项，则会执行什么操作？
 
@@ -1713,7 +1718,8 @@ history.go("nczonline.net");
 ```
 
 - go()有哪两个简写方法？
-  - back()和forward()。
+  - back()
+  - forward()。
 - 这两个方法模拟了什么？
   - 浏览器的后退按钮和前进按钮：
 
@@ -1729,18 +1735,13 @@ history.forward();
 
   - 历史记录中有多个条目。
 
-- length属性反映了什么？
-
-  - 历史记录的数量，
-    - 包括可以前进和后退的页面。
-
-- 对于窗口或标签页中加载的第一个页面，
+- 对于加载的第一个页面，
 
   history.length等于什么？
 
   - 1
 
-- 如何确定用户浏览器的起点是不是你的页面？
+- 如何确定浏览器的起点是不是你的页面？
 
 ```
 if (history.length == 1) {
@@ -1750,26 +1751,26 @@ if (history.length == 1) {
 
 - history对象通常被用于什么？
   - 创建“后退”和“前进”按钮，
-  - 确定页面是不是用户历史记录中的第一条记录。
-- 如果页面URL发生变化，则会执行什么操作？
-  - 在历史记录中生成一个新条目。
+  - 确定页面是不是第一条记录。
+- 如果页面URL发生变化，则会在历史记录中执行什么操作？
+  - 生成一个新条目。
 - 把location.hash设置为一个新值会发生什么？
-  - 在这些浏览器的历史记录中增加一条记录
-- 这个行为常被单页应用程序框架用来做什么？
-  - 模拟前进和后退，
-- 这样做是为了什么？
+  - 在历史记录中增加一条记录
+- 把location.hash设置为一个新值常被用来做什么？
+  - 模拟前进和后退
+- 模拟前进和后退是为了什么？
   - 不会因导航而触发页面刷新。
 
 ### **12.5.2** 历史状态管理 
 
 - hashchange会在什么时候被触发？
-  - 页面URL的散列变化时被触发，
-- 状态管理API则可以让开发者做什么？
+  - 页面URL的散列变化时
+- hashchangeAPI可以让开发者做什么？
   - 改变浏览器URL而不会加载新页面。
 - history.pushState()方法接收哪3个参数？
   - 一个state对象
-  - 一个新状态的标题
-  - 一个（可选的）相对URL
+  - 一个标题
+  - 一个相对URL（可选的）
 
 ```
 let stateObject = {foo:"bar"}; history.pushState(stateObject, "My title", "baz.html");
@@ -1777,8 +1778,8 @@ let stateObject = {foo:"bar"}; history.pushState(stateObject, "My title", "baz.h
 
 - pushState()方法执行后，会执行什么操作？
 
-  - 状态信息就会被推到历史记录中，
-  - 浏览器地址栏也会改变以反映新的相对URL。
+  - 状态信息被推到历史记录中，
+  - 浏览器地址栏改变
 
 - 如果location.href返回的是地址栏中的内容，
 
@@ -1795,28 +1796,24 @@ let stateObject = {foo:"bar"}; history.pushState(stateObject, "My title", "baz.h
 
 - 第一个参数应该包含什么？
 
-  - 正确初始化页面状态所必需的信息。
+  - 初始化页面状态所必需的信息。
 
-- 为防止滥用，这个状态的对象大小通常在什么范围？
+- 为防止滥用，state对象大小通常在什么范围？
 
   - 500KB～1MB以内。 
 
-- pushState()是否会相应地启用“后退”按钮？
+- pushState()是否会启用“后退”按钮？
 
   - 会
-  - 因为pushState()会创建新的历史记录，
+  - 因为pushState()创建新的历史记录，
 
-- 此时单击“后退”按钮，就会触发什么事件？
+- 单击“后退”按钮，会触发什么事件？
 
   - window对象上的popstate事件。
 
-- popstate事件的事件对象有一个什么属性？
+- popstate事件的事件对象state属性包含什么？
 
-  - state属性
-
-- state属性包含什么？
-
-  - 通过pushState()第一个参数传入的state对象：
+  - state对象
 
 ```
 window.addEventListener("popstate", (event) => {
@@ -1828,13 +1825,19 @@ window.addEventListener("popstate", (event) => {
 ```
 
 - 基于这个状态，应该做什么？
-  - 把页面重置为状态对象所表示的状态（
+  - 把页面重置为
+  
+    state对象所表示的状态
+  
 - 页面初次加载时是否有状态？
   - 没有
+  
 - 点击“后退”按钮直到返回最初页面时，event.state是什么？
-  - 为null。
+  - null
+  
 - 可以通过history.state获取什么？
-  - 当前的状态对象，
+  - 当前的state对象，
+  
 - 如何更新状态？
   - replaceState() 
 
@@ -1851,14 +1854,16 @@ history.replaceState({newFoo: "newBar"}, "New title");
   应该只包含什么样的信息？
 
   - 可以被序列化的信息
-    - DOM元素之类并不适合放到状态对象里保存。 
+    - DOM元素不适合
 
 -  使用HTML5状态管理时，
 
   要确保什么？
 
-  - 通过pushState()创建的每个“假”URL背后都对应着服务器上一个真实的物理URL
+  - 通过pushState()创建的每个“假”URL背后
 
+    都对应着服务器上一个真实的物理URL
+  
   - 否则，单击“刷新”按钮会导致404错误。
 
 
