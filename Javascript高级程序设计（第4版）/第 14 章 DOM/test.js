@@ -1,5 +1,1 @@
-if (someNode.nextSibling === null) {
-    alert("Last node in the parent's childNodes list.");
-} else if (someNode.previousSibling === null) {
-    alert("First node in the parent's childNodes list.");
-}
+< html > < head > < title > document.write() Example < /title> </head > < body > < p > The current date and time is: < script type = "text/javascript" > document.write("<strong>" + (new Date()).toString() + "</strong>"); < /script> </p > < /body> </html >
