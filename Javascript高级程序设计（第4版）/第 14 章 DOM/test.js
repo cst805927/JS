@@ -1,1 +1,6 @@
-< html > < head > < title > document.write() Example < /title> </head > < body > < p > The current date and time is: < script type = "text/javascript" > document.write("<strong>" + (new Date()).toString() + "</strong>"); < /script> </p > < /body> </html >
+let div = document.getElementById("myDiv");
+alert(div.getAttribute("id")); // "myDiv"
+alert(div.getAttribute("class")); // "bd" 
+alert(div.getAttribute("title")); // "Body text" 
+alert(div.getAttribute("lang")); // "en" 
+alert(div.getAttribute("dir")); // "ltr"

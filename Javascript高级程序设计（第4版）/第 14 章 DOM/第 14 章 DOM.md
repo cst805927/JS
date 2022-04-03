@@ -1272,3 +1272,225 @@ let hasXmlDom = document.implementation.hasFeature("XML", "1.0");
 
   - 不可以
   - 不能多于一个
+
+### **14.1.3** **Element**类型 
+
+- Element类型的节点具有哪些特征？
+
+  - nodeType等于1； 
+  - nodeName值为元素的标签名； 
+
+  - nodeValue值为null； 
+
+  - parentNode值为Document或Element对象； 
+
+  - 子节点是Element、Text、Comment、ProcessingInstruction、CDATASection类型
+
+- 如何获取元素的标签名？
+  - nodeName
+  - tagName
+
+```
+<div id="myDiv"></div>
+```
+
+```
+let div = document.getElementById("myDiv");
+alert(div.tagName); // "DIV" 
+alert(div.tagName == div.nodeName); // true
+```
+
+- div.tagName返回的是"DIV"还是"div"？
+  - "DIV"
+- 在HTML中，元素标签名怎么表示？
+  - 全大写
+- 在XML（包括XHTML）中，标签名怎么表示？
+  - 与源代码中的大小写一致。
+- 最好将标签名转换为什么形式？
+  - 小写
+    - 以便于比较
+
+```
+if (element.tagName == "div") { // 不要这样做，可能出错！
+    // do something here
+}
+if (element.tagName.toLowerCase() == "div") {
+    // 推荐，适用于所有文档 // 做点什么 
+}
+```
+
+#### \01. **HTML**元素 
+
+- 所有HTML元素都通过什么类型表示？
+
+  - HTMLElement
+
+- 所有HTML元素上都有的标准属性有哪些？
+
+  - id，元素在文档中的唯一标识符； 
+
+  - title，包含元素的额外信息，通常以提示条形式展示； 
+
+  - lang，元素内容的语言代码（很少用）； 
+
+  - dir，语言的书写方向
+    - （"ltr"表示从左到右，
+    - "rtl"表示从右到左
+    - ，同样很少用）； 
+
+  - className，相当于class属性，
+
+    - 用于指定元素的CSS类
+
+    - （因为class是ECMAScript关键字，
+
+      所以不能直接用这个名字）。
+
+```
+<div id="myDiv" class="bd" title="Body text" lang="en" dir="ltr"></div>
+```
+
+```
+let div = document.getElementById("myDiv"); alert(div.id); // "myDiv" 
+alert(div.className); // "bd"
+alert(div.title); // "Body text" 
+alert(div.lang); // "en" 
+alert(div.dir); // "ltr"
+```
+
+```
+div.id = "someOtherId"; 
+div.className = "ft"; 
+div.title = "Some other text"; 
+div.lang = "fr"; 
+div.dir ="rtl";
+```
+
+- 修改id或lang对用户是否可见？
+  - 不可见
+- 修改title属性只会在什么时侯反映出来？
+  - 鼠标移到这个元素上
+- 修改dir会导致什么？
+  - 页面文本立即向左或向右对齐。
+- 修改className会导致什么？
+  - 立即应用到新类名的CSS样式
+
+- 所有HTML元素都是什么的实例？
+
+  - HTMLElement或其子类型
+
+- 下表列出了所有HTML元素及其对应的类型
+
+  （斜体表示已经废弃的元素）
+
+![image-20220402215319851](第 14 章 DOM.assets/image-20220402215319851.png)
+
+![image-20220402215341724](第 14 章 DOM.assets/image-20220402215341724.png)
+
+#### \02. 取得属性
+
+- 每个元素的属性用于什么？
+  - 附加信息。
+- 与属性相关的DOM方法主要有什么？
+  - getAttribute()
+  - setAttribute()
+  - removeAttribute()
+
+```
+let div = document.getElementById("myDiv");
+alert(div.getAttribute("id")); // "myDiv"
+alert(div.getAttribute("class")); // "bd" 
+alert(div.getAttribute("title")); // "Body text" 
+alert(div.getAttribute("lang")); // "en" 
+alert(div.getAttribute("dir")); // "ltr"
+```
+
+- 传给getAttribute()的属性名
+
+  与它们实际的属性名是否是一样的？
+
+  - 是
+
+- 如果给定的属性不存在，则getAttribute()返回什么？
+  - null
+
+- getAttribute()方法是否能取得自定义属性的值？
+  - 能
+
+```
+<div id="myDiv" my_special_attribute="hello!"></div>
+```
+
+```
+let value = div.getAttribute("my_special_attribute");
+```
+
+- 属性名是否区分大小写？
+  - 不区分
+- 自定义属性名应该怎么命名？
+  - 前缀data- 
+    - 以方便验证。 
+
+- 元素的所有属性是否可以通过
+
+  相应DOM元素对象的属性来取得？
+
+  - 可以
+
+- 所有公认（非自定义）的属性是否
+
+  会被添加为DOM对象的属性？
+
+  - 会
+
+```
+<div id="myDiv" align="left" my_special_attribute="hello"></div>
+```
+
+- 自定义属性是否会成为DOM对象的属性？
+  - 不会
+
+- 通过DOM对象访问的属性中
+
+  有哪两个返回的值
+
+  跟使用getAttribute()取得的值不一样？
+
+  - style属性
+  - 事件处理程序
+    - 比如onclick。
+
+- style属性用于什么？
+
+  - 为元素设定CSS样式。
+
+- 在使用getAttribute()访问style属性时，返回的是什么？
+
+  - CSS字符串。
+
+- 在通过DOM对象的属性访问style属性时，返回的是什么？
+
+  - 一个（CSSStyleDeclaration）对象。
+
+- DOM对象的style属性用于什么？
+
+  - 以编程方式读写元素样式，
+
+- 在元素上使用事件属性时，属性的值是什么？ 
+  - 一段JavaScript代码。
+- 如果使用getAttribute()访问事件属性，则返回什么？
+  - 字符串形式的源代码。
+- 通过DOM对象的属性访问事件属性时返回什么？
+  - 一个JavaScript函数
+  - （未指定该属性则返回null）。 
+
+- 考虑到以上差异，
+
+  开发者在进行DOM编程时通常会放弃使用什么？
+
+  - getAttribute()
+  - 只使用对象属性。
+
+- getAttribute()主要用于什么？
+
+  - 取得自定义属性的值。 
