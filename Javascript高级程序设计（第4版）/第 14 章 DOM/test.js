@@ -1,6 +1,8 @@
-let div = document.getElementById("myDiv");
-alert(div.getAttribute("id")); // "myDiv"
-alert(div.getAttribute("class")); // "bd" 
-alert(div.getAttribute("title")); // "Body text" 
-alert(div.getAttribute("lang")); // "en" 
-alert(div.getAttribute("dir")); // "ltr"
+function outputAttributes(element) {
+    let pairs = [];
+    for (let i = 0, len = element.attributes.length; i < len; ++i) {
+        const attribute = element.attributes[i];
+        pairs.push(`${attribute.nodeName}="${attribute.nodeValue}"`);
+    }
+    return pairs.join(" ");
+}

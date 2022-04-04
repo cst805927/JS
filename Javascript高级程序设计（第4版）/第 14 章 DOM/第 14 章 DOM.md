@@ -1494,3 +1494,162 @@ let value = div.getAttribute("my_special_attribute");
 - getAttribute()主要用于什么？
 
   - 取得自定义属性的值。 
+
+#### \03. 设置属性 
+
+- 与getAttribute()配套的方法是什么？
+  - setAttribute()
+
+- setAttribute()方法接收什么参数？
+  - 要设置的属性名
+  - 属性的值
+- 如果属性已经存在，则setAttribute()会执行什么操作？
+  - 以指定的值替换原来的值
+- 如果属性不存在，则setAttribute()会执行什么操作？
+  - 以指定的值创建该属性
+
+```
+div.setAttribute("id", "someOtherId");
+div.setAttribute("class", "ft");
+div.setAttribute("title", "Some other text");
+div.setAttribute("lang", "fr");
+div.setAttribute("dir", "rtl");
+```
+
+- setAttribute()适用于什么属性？
+
+  - HTML属性
+  - 自定义属性
+
+- 使用setAttribute()方法设置的属性名会转换成什么形式？
+
+  - 规范为小写形式
+
+- 直接给DOM对象的属性赋值
+
+  是否可以设置元素属性的值？
+
+  - 可以
+
+```
+div.id = "someOtherId";
+div.align = "left";
+```
+
+- 在DOM对象上添加自定义属性，
+
+  是否会自动让它变成元素的属性？
+
+  - 不会
+
+```
+div.mycolor = "red";
+alert(div.getAttribute("mycolor")); // null（IE除外）
+```
+
+- removeAttribute()用于什么？
+  - 从元素中删除属性
+- removeAttribute()执行什么操作？
+  - 清除属性的值
+  - 把整个属性完全从元素中去掉
+
+```
+div.removeAttribute("class");
+```
+
+#### \04. **attributes** 属性
+
+- 唯一使用attributes属性的DOM节点类型？
+
+  - Element类型
+
+- attributes属性包含一个什么实例？
+
+  - NamedNodeMap
+
+- NamedNodeMap是什么？
+
+  - 一个类似NodeList的“实时”集合。
+
+- NamedNodeMap元素的每个属性都表示什么？
+
+  - 一个Attr节点，
+
+- NamedNodeMap对象包含哪些方法？
+
+  - getNamedItem(*name*)，
+    - 返回nodeName属性等于*name*的节点； 
+
+  - removeNamedItem(*name*)，
+    - 删除nodeName属性等于*name*的节点； 
+
+  - setNamedItem(*node*)，
+    - 向列表中添加*node*节点，
+    - 以其nodeName为索引； 
+  - item(*pos*)，
+    - 返回索引位置*pos*处的节点
+
+- attributes属性中的每个节点的nodeName是什么？
+  - 对应属性的名字，
+- nodeValue是什么？
+  - 属性的值。
+
+- 如何取得元素id属性的值？
+
+```
+let id = element.attributes.getNamedItem("id").nodeValue;
+```
+
+-  使用中括号访问属性的简写形式：
+
+```
+let id = element.attributes["id"].nodeValue;
+```
+
+- 设置属性的值，
+
+```
+element.attributes["id"].nodeValue = "someOtherId";
+```
+
+- removeNamedItem()方法用于什么？
+
+  - 删除指定名字的属性。
+
+- removeAttribute和removeNamedItem
+
+  唯一的不同之处是什么？
+
+  - removeNamedItem()返回表示被删除属性的Attr节点：
+
+```
+let oldAttr = element.attributes.removeNamedItem("id");
+```
+
+- setNamedItem()方法接收什么参数？
+  - 一个属性节点
+- setNamedItem方法用于做什么？
+  - 给元素添加一个新属性
+
+```
+element.attributes.setNamedItem(newAttr)
+```
+
+- 开发者更喜欢使用
+
+  getAttribute()、removeAttribute()和setAttribute()方法
+
+- attributes属性最有用的场景是什么？
+  - 需要迭代元素上所有属性的时候。 
+
+```
+function outputAttributes(element) {
+    let pairs = [];
+    for (let i = 0, len = element.attributes.length; i < len; ++i) {
+        const attribute = element.attributes[i];
+        pairs.push(`${attribute.nodeName}="${attribute.nodeValue}"`);
+    }
+    return pairs.join(" ");
+}
+```
+
