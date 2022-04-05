@@ -1,6 +1,10 @@
-let attr = document.createAttribute("align");
-attr.value = "left";
-element.setAttributeNode(attr);
-alert(element.attributes["align"].value); // "left" 
-alert(element.getAttributeNode("align").value); // "left"
-alert(element.getAttribute("align")); // "left"
+function loadScriptString(code) {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    try {
+        script.appendChild(document.createTextNode(code));
+    } catch (ex) {
+        script.text = code;
+    }
+    document.body.appendChild(script);
+}

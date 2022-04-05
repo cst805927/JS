@@ -2293,3 +2293,130 @@ alert(element.getAttribute("align")); // "left"
   - removeAttribute()
   - setAttribute()
 
+## **14.2 DOM**编程
+
+### **14.2.1** 动态脚本
+
+- \<script>元素用于什么？
+  - 向网页中插入
+    - JavaScript代码外部文件，
+    - 作为该元素内容的源代码。
+- 动态脚本是什么？
+  - 在页面初始加载时不存在，
+  - 之后通过DOM包含的脚本。
+- 如何通过\<script>动态为网页添加脚本？
+  - 引入外部文件
+  - 直接插入源代码
+
+```
+<script src="foo.js"></script>
+```
+
+```
+let script = document.createElement("script");
+script.src = "foo.js";
+document.body.appendChild(script);
+```
+
+- 把\<script>元素添加到页面之前，
+
+  是否会下载外部文件？
+
+  - 不会
+
+-  抽象为一个函数
+
+```
+function loadScript(url) {
+    let script = document.createElement("script");
+    script.src = url;
+    document.body.appendChild(script);
+}
+```
+
+```
+loadScript("client.js");
+```
+
+- 嵌入源代码
+
+```
+<script>
+  function sayHi() {
+    alert("hi");
+  }
+</script>
+
+```
+
+```
+let script = document.createElement("script");
+
+script.appendChild(document.createTextNode("function sayHi(){alert('hi');}"));
+
+document.body.appendChild(script);
+```
+
+- 为什么在旧版本的IE中可能会导致问题?
+  - 因为IE不允许常规DOM访问\<script>元素子节点
+
+- \<script>元素上有一个text属性，
+
+  可以用来做什么？
+
+  - 添加JavaScript代码
+
+```
+var script = document.createElement("script");
+
+script.text = "function sayHi(){alert('hi');}";
+
+document.body.appendChild(script);
+```
+
+- Safari 3之前的版本是否支持这个text属性？
+  - 不支持
+
+```
+var script = document.createElement("script");
+
+var code = "function sayHi(){alert('hi');}";
+
+try {
+    script.appendChild(document.createTextNode("code"));
+} catch (ex) {
+    script.text = "code";
+}
+
+document.body.appendChild(script);
+```
+
+- 抽象出一个跨浏览器的函数：
+
+```
+function loadScriptString(code) {
+    var script = document.createElement("script");
+    
+    script.type = "text/javascript";
+    
+    try {
+        script.appendChild(document.createTextNode(code));
+    } catch (ex) {
+        script.text = code;
+    }
+    
+    document.body.appendChild(script);
+}
+```
+
+```
+loadScriptString("function sayHi(){alert('hi');}");
+```
+
+- 以这种方式加载的代码会在什么作用域中执行？
+  - 全局作用域
+- 添加的代码在什么时候生效？
+  - 调用返回后立即生效。
+
+- 通过innerHTML属性创建的\<script>元素是否会执行？
+  - 不会
