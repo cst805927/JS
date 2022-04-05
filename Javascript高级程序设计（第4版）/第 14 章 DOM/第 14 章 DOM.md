@@ -1721,7 +1721,7 @@ document.body.appendChild(div);
 
     - 4个Text节点
 
-      （表示<li>元素周围的空格）
+      （表示\<li>元素周围的空格）
 
 - 如果把元素之间的空格删掉，
 
@@ -1762,3 +1762,534 @@ let items = ul.getElementsByTagName("li");
 
 - 如果ul包含更多层级，则会返回什么？ 
   - 所有层级中的\<li>元素
+
+### **14.1.4** **Text**类型 
+
+- Text节点由什么类型表示？
+
+  - Text
+
+- Text节点包含什么？
+
+  - 按字面解释的纯文本
+  - 转义后的HTML字符
+
+- Text类型的节点具有哪些特征？
+
+  - nodeType等于3； 
+
+  - nodeName值为"#text"； 
+
+  - nodeValue值为节点中包含的文本； 
+
+  - parentNode值为Element对象； 
+
+  - 不支持子节点。 
+
+- 如何访问Text节点中包含的文本？
+
+  - nodeValue属性
+  - data属性
+
+- 有哪些操作文本的方法？
+
+  - appendData(*text*)，
+    - 向节点末尾添加文本*text*； 
+
+  - deleteData(*offset, count*)，
+    - 从位置*offset*开始删除*count*个字符；
+
+  - insertData(*offset, text*)，
+    - 在位置*offset*插入*text*； 
+
+  - replaceData(*offset, count, text*)，
+    - 用*text*替换从位置*offset*到*offset* + *count*的文本； 
+
+  - splitText(*offset*)，
+    - 在位置*offset*将当前文本节点拆分为两个文本节点； 
+
+  - substringData(*offset, count*)，
+    - 提取从位置*offset*到*offset* + *count*的文本。 
+
+- 如何获取文本节点中包含的字符数量？
+  - length属性
+  - nodeValue.length
+  - data.length
+
+- 默认情况下，包含文本内容的每个元素
+
+  最多可以有几个文本节点？
+
+  - 一个
+
+```
+<!-- 没有内容，因此没有文本节点 -->
+<div></div>
+
+<!-- 有空格，因此有一个文本节点 -->
+<div></div>
+
+<!-- 有内容，因此有一个文本节点 -->
+<div>Hello World!</div>
+
+```
+
+- 如何访问文本节点？
+
+```
+let textNode = div.firstChild; // 或div.childNodes[0]
+```
+
+- 如何修改文本节点？
+
+```
+div.firstChild.nodeValue = "Some other message";
+```
+
+- 修改文本节点时，HTML或XML代码会被怎么处理？
+  - 转换成实体编码
+  - 即小于号、大于号、引号会被转义
+
+```
+// 输出为"Some &lt;strong&gt;other&lt;/strong&gt; message"
+div.firstChild.nodeValue = "Some <strong>other</strong> message";
+```
+
+#### \01. 创建文本节点
+
+- 如何创建新文本节点？
+  - document.createTextNode()
+- document.createTextNode()接收什么参数？
+  - 要插入节点的文本
+- 要插入的文本会被怎么处理？
+  - 应用HTML或XML编码
+
+```
+let textNode = document.createTextNode("<strong>Hello</strong> world!");
+```
+
+- 创建新文本节点后，
+
+  其ownerDocument属性会被设置为什么？
+
+  - document
+
+```
+let element = document.createElement("div");
+
+element.className = "message";
+
+let textNode = document.createTextNode("Hello world!");
+
+element.appendChild(textNode);
+
+document.body.appendChild(element);
+```
+
+- 是否可以让元素包含多个文本子节点？
+  - 可以
+
+```
+let element = document.createElement("div");
+
+element.className = "message";
+
+let textNode = document.createTextNode("Hello world!");
+
+element.appendChild(textNode);
+
+let anotherTextNode = document.createTextNode("Yippee!");
+
+element.appendChild(anotherTextNode);
+
+document.body.appendChild(element);
+```
+
+- 在将一个文本节点作为另一个文本节点的同胞插入后，
+
+  两个文本节点的文本之间是否会包含空格？
+
+  - 不会
+
+#### \02. 规范化文本节点
+
+- 如何合并相邻的文本节点？
+  - normalize()
+- 是否所有类型的节点上都有normalize()方法？
+  - 是
+  - 因为方法是在Node类型中定义的
+
+```
+let element = document.createElement("div");
+element.className = "message";
+
+let textNode = document.createTextNode("Hello world!");
+element.appendChild(textNode);
+
+let anotherTextNode = document.createTextNode("Yippee!");
+element.appendChild(anotherTextNode);
+
+document.body.appendChild(element);
+
+alert(element.childNodes.length); // 2 
+
+element.normalize();
+alert(element.childNodes.length); // 1 
+alert(element.firstChild.nodeValue); // "Hello world!Yippee!"
+```
+
+- 浏览器在解析文档时，是否会创建同胞文本节点？
+  - 不会
+- 同胞文本节点只会出现在哪里？
+  - DOM脚本生成的文档树中。 
+
+#### \03. 拆分文本节点
+
+- splitText()可以做什么？
+  - 在指定的偏移位置拆分nodeValue，
+  - 将一个文本节点拆分成两个文本节点。
+- 拆分之后，原来的文本节点包含什么？
+  - 开头到偏移位置前的文本，
+- 新文本节点包含什么？
+  - 剩下的文本。
+- splitText()方法返回什么？
+  - 新的文本节点
+- 新的文本节点具有与原来的文本节点相同的什么？
+  - parentNode
+
+```
+let element = document.createElement("div");
+element.className = "message";
+
+let textNode = document.createTextNode("Hello world!");
+element.appendChild(textNode);
+
+document.body.appendChild(element);
+
+let newNode = element.firstChild.splitText(5);
+
+alert(element.firstChild.nodeValue); // "Hello"
+
+alert(newNode.nodeValue); // " world!"
+
+alert(element.childNodes.length); // 2
+```
+
+- 拆分文本节点最常用于什么？
+  - 从文本节点中提取数据的DOM解析技术。
+
+### **14.1.5** **Comment**类型
+
+- DOM中的注释通过什么类型表示？
+
+  - Comment
+
+- Comment类型的节点具有哪些特征？
+
+  - nodeType等于8； 
+
+  - nodeName值为"#comment"； 
+
+  - nodeValue值为注释的内容； 
+
+  - parentNode值为Document或Element对象； 
+
+  - 不支持子节点。 
+
+- Comment类型与Text类型继承哪一个基类？
+
+  - CharacterData
+
+- Comment类型拥有哪些字符串操作方法？
+
+  - 除splitText()之外
+
+    Text节点所有的字符串操作方法
+
+- 如何获得注释的实际内容？
+
+  - nodeValue
+  - data属性。
+
+- 注释节点是否可以作为父节点的子节点来访问？
+  - 可以
+
+```
+<div id="myDiv"><!-- A comment --></div>
+```
+
+```
+let div = document.getElementById("myDiv");
+let comment = div.firstChild;
+alert(comment.data); // "A comment"
+```
+
+- 如何创建注释节点？
+
+  - 用document.createComment()方法
+
+  - 参数为注释文本
+
+```
+let comment = document.createComment("A comment");
+```
+
+- 为什么注释节点很少通过JavaScrpit创建和访问？
+  - 因为注释几乎不涉及算法逻辑。
+- 浏览器是否承认\</html>标签之后的注释?
+  - 不承认
+- 如果要访问注释节点，则必须确定什么？
+  - 注释是\<html>元素的后代
+
+### **14.1.6** **CDATASection**类型 
+
+- CDATASection类型表示什么？
+
+  - XML中特有的CDATA区块。
+
+- CDATASection类型继承什么类型？
+
+  - Text类型
+
+- CDATASection类型拥有哪些字符串操作方法？
+
+  - 所有字符串操作方法。
+
+- CDATASection类型的节点具有以下特征：
+
+  - nodeType等于4；
+  - nodeName值为"#cdata-section"； 
+  - nodeValue值为CDATA区块的内容； 
+  - parentNode值为Document或Element对象； 
+
+  - 不支持子节点。 
+
+- CDATA区块只在什么文档中有效？
+
+  - XML
+
+- 某些浏览器比较陈旧的版本会 
+
+  错误地将CDATA区块解析为什么？
+
+  - Comment或Element。
+
+- 在真正的XML文档中，如何创建CDATA区块？
+  - 用document.createCDataSection()
+  - 并传入节点内容
+
+### **14.1.7** **DocumentType**类型 
+
+- DocumentType类型的节点包含什么？
+
+  - 文档的文档类型（doctype）信息
+
+- DocumentType类型具有哪些特征？
+
+  - nodeType等于10； 
+
+  - nodeName值为文档类型的名称； 
+
+  - nodeValue值为null； 
+
+  - parentNode值为Document对象； 
+
+  - 不支持子节点。 
+
+- DocumentType对象在DOM Level 1中是否支持动态创建？
+
+  - 不支持
+  - 只能在解析文档代码时创建。
+
+- 对于支持这个类型的浏览器，
+
+  DocumentType对象保存在什么属性中？
+
+  - document.doctype
+
+- DOM Level 1规定了DocumentType对象的哪几个属性？
+  - name
+    - 文档类型的名称 
+  - entities
+    - 实体的NamedNodeMap
+  - notations
+    - 表示法的NamedNodeMap
+- 浏览器中的文档通常是什么类型？
+  - HTML或XHTML文档
+    - 所以entities和notations列表为空
+
+- 只有什么属性是有用的？
+  - name
+- name属性包含什么？
+  - 文档类型的名称
+    - 即紧跟在<!DOCTYPE后面的文本
+
+```
+<!DOCTYPE HTML PUBLIC "-// W3C// DTD HTML 4.01// EN" "http:// www.w3.org/TR/html4/strict.dtd">
+```
+
+- 对于这个文档类型，name属性的值是"html"： 
+
+```
+alert(document.doctype.name); // "html"
+```
+
+### **14.1.8** **DocumentFragment**类型 
+
+- 在所有节点类型中，
+
+  什么类型是唯一一个在标记中没有对应表示？
+
+  - DocumentFragment
+
+- DOM将文档片段定义为什么？
+
+  - “轻量级”文档
+
+- DocumentFragment能够做什么？
+
+  - 包含和操作节点，
+    - 却没有完整文档那样额外的消耗。
+
+- DocumentFragment节点具有哪些特征？
+
+  - nodeType等于11； 
+
+  - nodeName值为"#document-fragment"； 
+
+  - nodeValue值为null； 
+
+  - parentNode值为null； 
+
+  - 子节点可以是Element、ProcessingInstruction、Comment、Text、CDATASection或EntityReference。 
+
+- 是否能直接把文档片段添加到文档？
+
+  - 不能
+
+- 文档片段的作用是什么？
+
+  - 充当其他要被添加到文档的节点的仓库。
+
+- 如何创建文档片段？
+
+  - 用document.createDocumentFragment()方法
+
+```
+let fragment = document.createDocumentFragment();
+```
+
+- 如果文档中的一个节点被添加到一个文档片段，
+
+  则该节点会被怎么处理？
+
+  - 从文档树中移除，
+    - 不会再被浏览器渲染。
+
+- 如何将文档片段的内容添加到文档？
+
+  - appendChild()
+  - insertBefore()
+
+- 文档片段本身是否会被添加到文档树？
+
+  - 不会
+
+```
+<ul id="myList"></ul>
+```
+
+- 假设想给这个\<ul>元素添加3个列表项。
+
+  如果分3次给这个元素添加列表项，浏览器就要怎么做？
+
+  - 重新渲染3次页面
+
+- 如何避免多次渲染？
+
+  - 使用文档片段创建所有列表项，
+  - 然后一次性将列表项添加到\<ul>元素
+
+```
+let fragment = document.createDocumentFragment();
+
+let ul = document.getElementById("myList");
+
+for (let i = 0; i < 3; ++i) {
+
+    let li = document.createElement("li");
+    
+    li.appendChild(document.createTextNode(`Item ${i + 1}`));
+    
+    fragment.appendChild(li);
+}
+
+ul.appendChild(fragment);
+```
+
+### **14.1.9** **Attr**类型
+
+- Attr类型表示什么？
+  - 元素属性
+- 属性是存在于元素什么属性中的节点？
+  - attributes
+
+- Attr节点具有以下特征：
+
+  - nodeType等于2； 
+
+  - nodeName值为属性名； 
+
+  - nodeValue值为属性值； 
+
+  - parentNode值为null； 
+
+  - 在HTML中不支持子节点； 
+
+  - 在XML中子节点可以是Text或EntityReference。
+
+- 属性节点是否被认为是DOM文档树的一部分？
+  - 否
+- 通常开发者更喜欢使用什么方法操作属性？
+  - getAttribute()、
+  - removeAttribute()
+  - setAttribute()
+
+- Attr对象上有哪3个属性？
+  - name
+    - 属性名
+    - （与nodeValue一样）
+  - value
+    - 属性值
+  - specified
+    - 布尔值
+    - 表示属性使用的是默认值还是被指定的值。
+
+- 如何创建新的Attr节点？
+  - document.createAttribute()
+  - 参数为属性名
+
+```
+let attr = document.createAttribute("align");
+
+attr.value = "left";
+
+element.setAttributeNode(attr);
+
+alert(element.attributes["align"].value); // "left" 
+
+alert(element.getAttributeNode("align").value); // "left"
+
+alert(element.getAttribute("align")); // "left"
+```
+
+- attributes属性和getAttributeNode()方法都返回什么？
+  - 属性对应的Attr节点
+- getAttribute()方法只返回什么？
+  - 属性的值。 
+
+- 推荐使用什么方法操作属性，而不是直接操作属性节点？
+  - getAttribute()
+  - removeAttribute()
+  - setAttribute()
+
