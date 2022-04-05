@@ -1653,3 +1653,112 @@ function outputAttributes(element) {
 }
 ```
 
+#### \05. 创建元素 
+
+- 如何创建新元素？
+  - document.createElement()
+- document.createElement()方法接收什么参数？
+  - 要创建元素的标签名
+- 在HTML文档中，标签名是否区分大小写？ 
+  - 不区分大小写
+
+- XML文档（包括XHTML）是否区分大小写？
+  - 区分大小写 
+
+```
+let div = document.createElement("div");
+```
+
+- 使用createElement()方法创建新元素的
+
+  同时会执行什么操作？
+
+  - 会将其ownerDocument属性设置为document
+
+```
+div.id = "myNewDiv"; 
+div.className = "box";
+```
+
+- 在新元素上设置属性是否会显示在浏览器？
+  - 不会
+  - 因为这个元素还没有添加到文档树
+- 如何把元素添加到文档树？
+  - appendChild()、
+  - insertBefore()
+  - replaceChild()
+
+```
+document.body.appendChild(div);
+```
+
+#### \06. 元素后代
+
+- childNodes属性包含什么？
+  - 元素所有的子节点
+- 这些子节点可能是什么？
+  - 其他元素、
+  - 文本节点、
+  - 注释
+  - 处理指令。
+- 不同浏览器在识别这些节点时的表现是否一致？
+  - 有明显不同。
+
+```
+<ul id="myList">
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>
+
+```
+
+- \<ul>元素会包含多少个子元素？
+
+  - 7个
+
+    - 3个是\<li>元素
+
+    - 4个Text节点
+
+      （表示<li>元素周围的空格）
+
+- 如果把元素之间的空格删掉，
+
+  则所有浏览器都会返回多少个子节点？
+
+  - 3
+
+```
+<ul id="myList"><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>
+```
+
+- 通常在执行某个操作之前需要做什么？
+  - 先检测节点的nodeType
+
+```
+for (let i = 0, len = element.childNodes.length; i < len; ++i) {
+    if (element.childNodes[i].nodeType == 1) {
+        // 执行某个操作 
+    }
+}
+```
+
+- 如何取得某个元素的子节点和其他后代节点？
+
+  - 用元素的getElementsByTagName()方法。
+
+- 在元素上调用getElementsByTagName()方法
+
+  与在文档上调用有什么区别？
+
+  - 搜索范围限制在当前元素之内
+    - 只会返回当前元素的后代。
+
+```
+let ul = document.getElementById("myList");
+let items = ul.getElementsByTagName("li");
+```
+
+- 如果ul包含更多层级，则会返回什么？ 
+  - 所有层级中的\<li>元素
