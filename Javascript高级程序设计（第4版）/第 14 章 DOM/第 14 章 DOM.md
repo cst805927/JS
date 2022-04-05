@@ -2420,3 +2420,517 @@ loadScriptString("function sayHi(){alert('hi');}");
 
 - 通过innerHTML属性创建的\<script>元素是否会执行？
   - 不会
+
+### **14.2.2** 动态样式 
+
+- 如何在HTML页面中加载CSS样式？
+  - \<link>元素
+  - \<style>元素
+- \<link>元素用于什么？
+  - 包含CSS外部文件
+- \<style>元素用于什么？
+  - 添加嵌入样式。
+- 动态样式的特点是什么？
+  - 页面初始加载时不存在，
+  - 之后才添加到页面中的。
+
+```
+<link rel="stylesheet" type="text/css" href="styles.css">
+```
+
+```
+let link = document.createElement("link");
+link.rel = "stylesheet";
+link.type = "text/css";
+link.href = "styles.css";
+let head = document.getElementsByTagName("head")[0];
+head.appendChild(link);
+```
+
+- 抽象为以下通用函数：
+
+```
+function loadStyles(url) {
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = url;
+    let head = document.getElementsByTagName("head")[0];
+    head.appendChild(link);
+}
+```
+
+```
+loadStyles("styles.css")
+```
+
+- 外部样式的加载和正执行的JavaScript代码是否有先后顺序？
+  - 没有
+  - 因为通过外部文件加载样式是一个异步过程。
+
+```
+<style type="text/css">
+  body {
+    background-color: red;
+  }
+</style>
+
+```
+
+```
+let style = document.createElement("style");
+
+style.type = "text/css";
+
+style.appendChild(document.createTextNode("body{background-color:red}"));
+
+let head = document.getElementsByTagName("head")[0];
+
+head.appendChild(style);
+```
+
+- IE是否允许访问\<style>的子节点？
+
+  - 否
+
+- 对于IE浏览器，
+
+  如何在HTML页面中加载CSS样式？
+
+  - 访问元素的styleSheet属性的cssText属性，
+  - 然后给cssText属性添加CSS代码
+
+```
+let style = document.createElement("style");
+
+style.type = "text/css";
+
+try {
+    style.appendChild(document.createTextNode("body{background-color:red}"));
+    
+} catch (ex) {
+
+    style.styleSheet.cssText = "body{background-color:red}";
+}
+
+let head = document.getElementsByTagName("head")[0];
+
+head.appendChild(style);
+```
+
+- 最终的通用函数：
+
+```
+function loadStyleString(css) {
+    let style = document.createElement("style");
+    
+    style.type = "text/css";
+    
+    try {
+        style.appendChild(document.createTextNode(css));
+        
+    } catch (ex) {
+    
+        style.styleSheet.cssText = css;
+    }
+    
+    let head = document.getElementsByTagName("head")[0];
+    
+    head.appendChild(style);
+}
+```
+
+```
+loadStyleString("body{background-color:red}");
+```
+
+- 对于IE，要小心使用styleSheet.cssText。
+
+  在什么情况下，可能导致浏览器崩溃？
+
+  - 重用同一个\<style>元素
+
+    并设置该属性超过一次
+
+  - 将cssText设置为空字符串
+
+### **14.2.3** 操作表格
+
+```
+<table border="1" width="100%">
+  <tbody>
+    <tr>
+      <td>Cell 1,1</td>
+      <td>Cell 2,1</td>
+    </tr>
+    <tr>
+      <td>Cell 1,2</td>
+      <td>Cell 2,2</td>
+    </tr>
+  </tbody>
+</table>
+
+```
+
+```
+// 创建表格
+let table = document.createElement("table");
+table.border = 1;
+table.width = "100%";
+
+// 创建表体 
+let tbody = document.createElement("tbody");
+table.appendChild(tbody);
+
+// 创建第一行 
+let row1 = document.createElement("tr");
+tbody.appendChild(row1);
+let cell1_1 = document.createElement("td");
+cell1_1.appendChild(document.createTextNode("Cell 1,1"));
+row1.appendChild(cell1_1);
+let cell2_1 = document.createElement("td");
+cell2_1.appendChild(document.createTextNode("Cell 2,1"));
+row1.appendChild(cell2_1);
+
+// 创建第二行 
+let row2 = document.createElement("tr");
+tbody.appendChild(row2);
+let cell1_2 = document.createElement("td");
+cell1_2.appendChild(document.createTextNode("Cell 1,2"));
+row2.appendChild(cell1_2);
+let cell2_2 = document.createElement("td");
+cell2_2.appendChild(document.createTextNode("Cell 2,2"));
+row2.appendChild(cell2_2);
+
+// 把表格添加到文档主体 
+document.body.appendChild(table);
+```
+
+- \<table>元素添加了以下属性和方法：
+
+  - caption，指向<caption>元素的指针（如果存在）； 
+
+    tBodies，包含<tbody>元素的HTMLCollection； 
+
+    tFoot，指向<tfoot>元素（如果存在）； 
+
+    tHead，指向<thead>元素（如果存在）； 
+
+    rows，包含表示所有行的HTMLCollection； 
+
+    createTHead()，创建<thead>元素，放到表格中，返回引用；
+
+    createTFoot()，创建<tfoot>元素，放到表格中，返回引用； 
+
+    createCaption()，创建<caption>元素，放到表格中，返回引用； 
+
+    deleteTHead()，删除<thead>元素； 
+
+    deleteTFoot()，删除<tfoot>元素； 
+
+    deleteCaption()，删除<caption>元素； 
+
+    deleteRow(*pos*)，删除给定位置的行； 
+
+    insertRow(*pos*)，在行集合中给定位置插入一行。 
+
+- \<tbody>元素添加了以下属性和方法：
+
+  - rows，
+    - 包含\<tbody>元素中所有行的HTMLCollection； 
+
+  - deleteRow(*pos*)，
+    - 删除给定位置的行； 
+
+  - insertRow(*pos*)，
+    - 在行集合中给定位置插入一行，
+    - 返回该行的引用。 
+
+- \<tr>元素添加了以下属性和方法： 
+
+  - cells，
+    - 包含\<tr>元素所有表元的HTMLCollection； 
+
+  - deleteCell(*pos*)，
+    - 删除给定位置的表元； 
+
+  - insertCell(*pos*)，
+    - 在表元集合给定位置插入一个表元，
+    - 返回该表元的引用。 
+
+```
+// 创建表格 
+let table = document.createElement("table");
+table.border = 1;
+table.width = "100%";
+
+// 创建表体 
+let tbody = document.createElement("tbody");
+table.appendChild(tbody);
+
+// 创建第一行 
+tbody.insertRow(0);
+tbody.rows[0].insertCell(0);
+tbody.rows[0].cells[0].appendChild(document.createTextNode("Cell 1,1"));
+tbody.rows[0].insertCell(1);
+tbody.rows[0].cells[1].appendChild(document.createTextNode("Cell 2,1"));
+
+// 创建第二行 
+tbody.insertRow(1);
+tbody.rows[1].insertCell(0);
+tbody.rows[1].cells[0].appendChild(document.createTextNode("Cell 1,2"));
+tbody.rows[1].insertCell(1);
+tbody.rows[1].cells[1].appendChild(document.createTextNode("Cell 2,2"));
+
+// 把表格添加到文档主体
+document.body.appendChild(table);
+```
+
+- 使用属性和方法创建表格的优点？
+  - 让代码变得更有逻辑性
+  - 更容易理解
+
+### **14.2.4** 使用**NodeList**
+
+- NodeList、NamedNodeMap、HTMLCollection
+
+  这3个集合类型的特点是什么？
+
+  - 都是“实时的”，
+    - 意味着文档结构的变化会实时地反映出来，
+    - 因此它们的值代表最新的状态。 
+
+- NodeList就是基于DOM文档的实时查询。
+
+- 下面的代码会导致无穷循环： 
+
+```
+let divs = document.getElementsByTagName("div");
+
+for (let i = 0; i < divs.length; ++i) {
+
+    let div = document.createElement("div");
+    
+    document.body.appendChild(div);
+}
+```
+
+- 以下代码仍然会导致无穷循环：
+
+```
+for (let div of document.getElementsByTagName("div")) {
+    let newDiv = document.createElement("div");
+    document.body.appendChild(newDiv);
+}
+```
+
+- 任何时候要迭代NodeList，最好怎么做？
+  - 初始化一个变量保存当时长度，
+    - 然后用循环变量与这个变量进行比较，
+  - 反向迭代集合
+
+```
+let divs = document.getElementsByTagName("div");
+
+for (let i = 0, len = divs.length; i < len; ++i) {
+
+    let div = document.createElement("div");
+    
+    document.body.appendChild(div);
+}
+```
+
+```
+let divs = document.getElementsByTagName("div");
+
+for (let i = divs.length - 1; i >= 0; --i) {
+
+    let div = document.createElement("div");
+    
+    document.body.appendChild(div);
+}
+```
+
+- 为什么要限制操作NodeList的次数？
+  - 因为每次查询都会搜索整个文档，
+  - 所以最好把查询到的NodeList缓存起来。
+
+## **14.3** **MutationObserver**接口 
+
+- MutationObserver接口可以做什么？
+  - 在DOM被修改时异步执行回调。
+
+- 新引进MutationObserver接口是为了取代什么？
+  - 废弃的MutationEvent。
+
+### **14.3.1** 基本用法
+
+- 如何创建MutationObserver的实例？
+  - 调用MutationObserver构造函数
+  - 并传入一个回调函数
+
+```
+let observer = new MutationObserver(() => console.log('DOM was mutated!'));
+```
+
+#### \01. **observe()**方法
+
+- 新创建的MutationObserver实例是否
+
+  会关联DOM的任何部分？
+
+  - 不会
+
+- 如何把observer与DOM关联起来？
+  - 使用observe()
+- observe()方法接收哪两个必需的参数？
+  - DOM节点
+  - 一个MutationObserverInit对象
+
+- MutationObserverInit对象用于什么？
+  - 控制观察哪些方面的变化，
+  - 是一个键/值对形式配置选项的字典
+
+- 会创建一个观察者（bserver）
+
+  并配置它观察\<body>元素上的属性变化：
+
+```
+let observer = new MutationObserver(() => console.log('<body> attributes changed'));
+
+observer.observe(document.body, {
+    attributes: true
+});
+```
+
+- \<body>元素后代的修改或其他非属性修改
+
+  是否会触发回调进入任务队列？
+
+  - 不会
+
+```
+let observer = new MutationObserver(() => console.log('<body> attributes changed'));
+
+observer.observe(document.body, {
+    attributes: true
+});
+
+document.body.className = 'foo';
+
+console.log('Changed body class');
+
+// Changed body class
+// <body> attributes changed
+```
+
+- 为什么回调中的console.log()是后执行的？
+  - 回调是异步执行的
+
+#### \02. 回调与**MutationRecord** 
+
+- 每个回调收到第一个参数是什么？
+
+  - MutationRecord实例的数组
+
+- 为什么每次执行回调都会传入一个
+
+  包含按顺序入队的MutationRecord实例的数组？
+
+  - 因为回调执行之前
+
+    可能同时发生多个满足观察条件的事件
+
+```
+let observer = new MutationObserver((mutationRecords) => console.log(mutationRecords));
+
+observer.observe(document.body, {
+    attributes: true
+});
+
+document.body.setAttribute('foo', 'bar');
+
+// [
+// { 
+// addedNodes: NodeList [], 
+// attributeName: "foo", 
+// attributeNamespace: null, 
+// nextSibling: null, 
+// oldValue: null, 
+// previousSibling: null 
+// removedNodes: NodeList [],
+// target: body 
+// type: "attributes" 
+// } 
+// ]
+```
+
+- 涉及命名空间的类似变化
+
+```
+let observer = new MutationObserver((mutationRecords) => console.log(mutationRecords));
+
+observer.observe(document.body, {
+    attributes: true
+});
+
+document.body.setAttributeNS('baz', 'foo', 'bar');
+
+// [
+// { 
+// addedNodes: NodeList [], 
+// attributeName: "foo", 
+// attributeNamespace: "baz", 
+// nextSibling: null, 
+// oldValue: null, 
+// previousSibling: null 
+// removedNodes: NodeList [], 
+// target: body 
+// type: "attributes" 
+// } 
+// ]
+```
+
+- 连续修改会生成什么？
+  - 多个MutationRecord实例，
+
+- 下次回调执行时就会收到什么？
+  - 包含所有这些实例的数组，
+  - 顺序为变化事件发生的顺序： 
+
+```
+let observer = new MutationObserver((mutationRecords) => console.log(mutationRecords));
+
+observer.observe(document.body, {
+    attributes: true
+});
+
+document.body.className = 'foo';
+document.body.className = 'bar';
+document.body.className = 'baz';
+
+// [MutationRecord, MutationRecord, MutationRecord]
+```
+
+- 下表列出了MutationRecord实例的属性。 
+
+![image-20220405205449506](第 14 章 DOM.assets/image-20220405205449506.png)
+
+![image-20220405205502030](第 14 章 DOM.assets/image-20220405205502030.png)
+
+- 传给回调函数的第二个参数是什么？
+  - 观察变化的MutationObserver的实例
+
+```
+let observer = new MutationObserver((mutationRecords, mutationObserver) => console.log(mutationRecords, mutationObserver));
+
+observer.observe(document.body, {
+    attributes: true
+});
+
+document.body.className = 'foo';
+
+// [MutationRecord], MutationObserver
+```
+
+ 
