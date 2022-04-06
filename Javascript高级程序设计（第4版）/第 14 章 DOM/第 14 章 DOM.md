@@ -2933,4 +2933,49 @@ document.body.className = 'foo';
 // [MutationRecord], MutationObserver
 ```
 
- 
+##  **14.4** 小结 
+
+- DOM Level 1将HTML和XML文档定义为什么？
+
+  - 一个节点的多层级结构，
+
+- DOM由什么构成？
+
+  - 一系列节点类型
+
+- DOM节点类型主要包括哪几种？
+
+  - Node
+    - 是文档一个部分的抽象表示
+    - 所有其他类型都继承Node。 
+
+  - Document类型
+
+    - 表示整个文档，
+
+    - 对应树形结构的根节点。
+
+    - document对象是Document的实例
+
+      可以查询和获取节点
+
+  - Element节点
+    - 表示文档中所有HTML或XML元素
+    - 可以用来操作它们的内容和属性 
+
+  - 其他节点类型分别表示
+    - 文本内容
+    - 注释
+    - 文档类型
+    - CDATA区块
+    - 文档片段
+
+- NodeList对象是“实时更新”的，这意味着什么？
+
+  - 每次访问它都会执行一次新的查询。
+  - 考虑到这些问题，实践中要尽量减少DOM操作的数量。 
+
+- MutationObserver代替什么？
+  - MutationEvent
+- 使用MutationObserver可以做什么？
+  - 监控DOM变化
