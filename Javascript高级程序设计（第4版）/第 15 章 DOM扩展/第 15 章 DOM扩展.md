@@ -117,3 +117,78 @@ for (let i = 0; i < strongElements.length; ++i) {
   - 抛出错误。
 
 ### **15.1.3** **matches()**
+
+- matches()方法接收什么参数？
+  - 一个CSS选择符
+- 如果元素匹配则该选择符返回什么？
+  - true，
+  - 否则返回false
+
+```
+if (document.body.matches("body.page1")) {
+	// true
+}
+```
+
+## **15.2** 元素遍历
+
+- Element Traversal API为DOM元素添加了哪5个属性？
+
+  - childElementCount，
+    - 返回子元素数量（不包含文本节点和注释）； 
+
+  - firstElementChild，
+    - 指向第一个Element类型的子元素
+
+  - lastElementChild，
+    - 指向最后一个Element类型的子元素
+
+  - previousElementSibling，
+    - 指向前一个Element类型的同胞元素  
+
+  - nextElementSibling，
+    - 指向后一个Element类型的同胞元素 
+
+- 过去要以跨浏览器方式遍历特定元素的所有子元素
+
+```
+let parentElement = document.getElementById('parent');
+
+let currentChildNode = parentElement.firstChild;
+
+// 没有子元素，firstChild返回null，跳过循环
+while (currentChildNode) {
+	if (currentChildNode.nodeType === 1) {
+		// 如果有元素节点，则做相应处理 
+		processChild(currentChildNode);
+	}
+	
+	if (currentChildNode === parentElement.lastChild) {
+		break;
+	}
+	
+	currentChildNode = currentChildNode.nextSibling;
+}
+```
+
+- 使用Element Traversal属性之后，以上代码可以简化如下：
+
+```
+let parentElement = document.getElementById('parent');
+
+let currentChildElement = parentElement.firstElementChild;
+
+// 没有子元素，firstElementChild返回null，跳过循环 
+while (currentChildElement) {
+
+	// 这就是元素节点，做相应处理 
+	processChild(currentChildElement);
+	
+	if (currentChildElement === parentElement.lastElementChild) {
+		break;
+	}
+	
+	currentChildElement = currentChildElement.nextElementSibling;
+}
+```
+
