@@ -438,3 +438,583 @@ if (div.dataset.myname) {
   - 需要给元素附加某些数据，
     - 比如链接追踪和
     - 在聚合应用程序中标识页面的不同部分
+
+### **15.3.6** 插入标记 
+
+#### \01. **innerHTML**属性
+
+- innerHTML属性返回什么？
+
+  - 元素所有后代的HTML字符串，
+  - 包括元素、注释和文本节点。
+
+- 在写入innerHTML时会执行什么操作？
+
+  - 则会根据提供的字符串值
+
+    以新的DOM子树
+
+    替代元素中原来包含的所有节点。 
+
+```
+<div id="content">
+  <p>This is a <strong>paragraph</strong> with a list following it.</p>
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+  </ul>
+</div>
+
+```
+
+- 对于这里的\<div>元素，
+
+  其innerHTML属性会返回以下字符串：
+
+```
+<p>This is a <strong>paragraph</strong> with a list following it.</p>
+<ul>
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>
+
+```
+
+- 每个浏览器innerHTML返回的内容是否相同？
+  - 不一定
+
+- 在写入模式下，
+
+  赋给innerHTML属性的值会被解析为什么？
+
+  - DOM子树
+
+- 赋给innerHTML属性的值默认为什么？
+
+  - HTML，
+
+- 所有标签都会以什么方式转换为元素？
+
+  - 浏览器处理HTML的
+
+- 如果赋值中不包含任何HTML标签，则生成什么？
+
+  - 一个文本节点
+
+```
+div.innerHTML = "Hello world!";
+```
+
+- 给innerHTML设置包含HTML的字符串时：
+
+```
+div.innerHTML = "Hello & welcome, <b>\"reader\"!</b>";
+```
+
+```
+<div id="content">Hello &amp; welcome, <b>&quot;reader&quot;!</b></div>
+```
+
+- 设置innerHTML会导致浏览器执行什么操作？
+  - 将HTML字符串解析为相应的DOM树。
+- innerHTML属性返回的字符串是什么的结果？
+  - 将原始字符串对应的DOM子树序列化之后
+
+#### \02. 旧**IE**中的**innerHTML**
+
+- 在所有现代浏览器中，
+
+  通过innerHTML插入的\<script>标签是否会执行？
+
+  - 不会
+
+- 在IE8及之前，插入的\<script>元素指定了defer属性，
+
+  且\<script>之前是“受控元素”
+
+  是否可以执行的？
+
+  - 可以
+
+- “非受控元素”常见的有哪些？
+  - \<script>元素
+  - \<style>
+  - 注释
+
+- “非受控元素”的特点是什么？
+  - 在页面上看不到它们。
+- IE会把innerHTML中的什么内容都删掉？
+  - 从非受控元素开始
+
+```
+// 行不通
+div.innerHTML = "<script defer>console.log('hi');<\/script>";
+```
+
+- 上面整个字符串是否会被清空？
+  - 会
+    - 因为字符串以一个非受控元素开始
+- 如何通过innerHTML添加非受控元素？
+  - 在\<script>前面加上一个受控元素，
+
+```
+// 以下都可行 
+div.innerHTML = "_<script defer>console.log('hi');<\/script>";
+
+div.innerHTML = "<div>&nbsp;</div><script defer>console.log('hi');<\/script>";
+
+div.innerHTML = "<input type=\"hidden\"><script defer>console. log('hi');<\/script>";
+```
+
+- 在\<script>前面加空\<div>是否可行？
+  - 不可行
+- 为什么\<div>必须包含内容？
+  - 以强制创建一个文本节点。
+- 第三行使用的\<input>字段是否影响页面布局？
+  - 不影响
+  - 因为是隐藏的
+    - 因此是最理想的方案。 
+
+- 但在IE8及之前，\<style>也被认为是非受控元素，
+
+  所以必须前置一个受控元素：
+
+```
+div.innerHTML = "_<style type=\"text/css\">body {background-color: red; }</style>"; div.removeChild(div.firstChild);
+```
+
+#### \03. **outerHTML**属性
+
+- 读取outerHTML属性时，会返回什么？
+
+  - 调用它的元素（及所有后代元素）的HTML字符串。
+
+- 写入outerHTML属性时，会执行什么？
+
+  - 调用它的元素会被
+
+    传入的HTML字符串生成的DOM子树取代
+
+```
+<div id="content">
+  <p>This is a <strong>paragraph</strong> with a list following it.</p>
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+  </ul>
+</div>
+
+```
+
+- 在这个\<div>元素上调用outerHTML会返回什么?
+  - 相同的字符串
+  - 包括\<div>本身
+
+- 如果使用outerHTML设置HTML
+
+```
+div.outerHTML = "<p>This is a paragraph.</p>";
+```
+
+- 则会得到与执行以下脚本相同的结果： 
+
+```
+let p = document.createElement("p");
+
+p.appendChild(document.createTextNode("This is a paragraph."));
+
+div.parentNode.replaceChild(p, div);
+```
+
+#### \04. **insertAdjacentHTML()**与**insertAdjacentText()**
+
+- insertAdjacentHTML()和 
+
+  insertAdjacentText()接收什么参数？
+
+  - 接收两个参数：
+    - 要插入标记的位置
+    - 要插入的HTML或文本。
+
+- 第一个参数必须是哪些值？ 
+
+  - "beforebegin"，
+    - 插入当前元素前面，
+    - 作为前一个同胞节点； 
+
+  - "afterbegin"
+    - 插入当前元素内部，
+      - 作为新的子节点
+      - 或放在第一个子节点前面； 
+
+  - "beforeend"
+    - 插入当前元素内部
+      - 作为新的子节点
+      - 或放在最后一个子节点后面； 
+
+  - "afterend"
+    - 插入当前元素后面
+    - 作为下一个同胞节点
+
+- 注意这几个值是否区分大小写？
+
+  - 不区分
+
+- 第二个参数会作为什么解析？
+
+  - HTML字符串 
+
+  - 纯文本
+
+- 第二个参数如果是HTML字符串，
+
+  则会在解析出错时执行什么操作？
+
+  - 抛出错误
+
+```
+// 作为前一个同胞节点插入
+element.insertAdjacentHTML("beforebegin", "<p>Hello world!</p>");
+element.insertAdjacentText("beforebegin", "Hello world!");
+
+// 作为第一个子节点插入 
+element.insertAdjacentHTML("afterbegin", "<p>Hello world!</p>");
+element.insertAdjacentText("afterbegin", "Hello world!");
+
+// 作为最后一个子节点插入 
+element.insertAdjacentHTML("beforeend", "<p>Hello world!</p>");
+element.insertAdjacentText("beforeend", "Hello world!");
+
+// 作为下一个同胞节点插入 
+element.insertAdjacentHTML("afterend", "<p>Hello world!</p>");
+element.insertAdjacentText("afterend", "Hello world!");
+```
+
+#### \05. 内存与性能问题 
+
+- 如果被移除的子树元素中
+
+  之前有关联的事件处理程序或其他JavaScript对象
+
+  那它们之间的绑定关系会被怎么处理？
+
+  - 滞留在内存中。
+
+- 在使用innerHTML、outerHTML和 
+
+  insertAdjacentHTML()之前，
+
+  最好怎么做？
+
+  - 手动删除要被替换的元素上
+
+    关联的事件处理程序和JavaScript对象。
+
+- 插入大量的新HTML时，
+
+  使用innerHTML，
+
+  和使用DOM创建节点再插入
+
+  哪个更便捷？
+
+  - innerHTML
+
+    - 因为HTML解析器会解析innerHTML的值。
+
+    - 解析器是底层代码（通常是C++代码）
+
+      比JavaScript快得多
+
+```
+for (let value of values) {
+	ul.innerHTML += '<li>${value}</li>'; // 别这样做！ 
+}
+```
+
+- 为什么这段代码效率低？
+  - 因为循环一次要访问两次innerHTML
+    - 设置一次
+    - 读取一次
+- 最好怎么使用innerHTML？
+  - 先构建一个独立的字符串，
+  - 循环结束后再把该字符串赋值给innerHTML
+
+```
+let itemsHtml = "";
+
+for (let value of values) {
+	itemsHtml += '<li>${value}</li>';
+}
+
+ul.innerHTML = itemsHtml;
+```
+
+```
+ul.innerHTML = values.map(value => '<li>${value}</li>').join('');
+```
+
+#### \06. 跨站点脚本
+
+- 如果页面中要使用用户提供的信息，
+
+  则是否建议使用innerHTML？
+
+  - 不建议
+
+  - 因为通过innerHTML可以创建元素
+
+    并执行onclick之类的属性
+
+- 如何在使用innerHTML时保证安全？
+  - 隔离要插入的数据
+  - 在插入页面前使用相关的库对数据进行转义。 
+
+### **15.3.7** **scrollIntoView()**
+
+- scrollIntoView()方法可以做什么？
+
+  - 以滚动浏览器窗口或容器元素
+
+    以包含元素进入视口
+
+- scrollIntoView()方法接收什么参数？
+
+  - alignToTop
+
+    - 布尔值。 
+
+    - true：窗口滚动后元素的顶部与视口顶部对齐。 
+
+    - false：窗口滚动后元素的底部与视口底部对齐。 
+
+  - scrollIntoViewOptions
+
+    - 选项对象。 
+
+    - behavior：定义过渡动画，
+
+      - 可取的值为"smooth"和"auto"，
+
+      - 默认为"auto"。 
+
+    - block：定义垂直方向的对齐，
+      - 可取的值为"start"、"center"、"end"和"nearest"
+      - 默认为 "start"。 
+
+    - inline：定义水平方向的对齐，
+      - 可取的值为"start"、"center"、"end"和"nearest"，
+      - 默认为"nearest"。 
+
+- scrollIntoViewOptions不传参数等同于什么？
+  - alignToTop为true。
+
+```
+// 确保元素可见 
+document.forms[0].scrollIntoView();
+
+// 同上 
+document.forms[0].scrollIntoView(true);
+document.forms[0].scrollIntoView({ block: 'start' });
+
+// 尝试将元素平滑地滚入视口 
+document.forms[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+```
+
+- scrollIntoView方法可以用来在页面上发生某个事件时
+
+  做什么？
+
+  - 引起用户关注。
+
+- 怎么做也会导致浏览器将元素滚动到可见位置？
+
+  - 把焦点设置到一个元素上
+
+## **15.4** 专有扩展
+
+### **15.4.1** **children**属性
+
+- children属性是什么类型的实例？
+  - HTMLCollection，
+- children属性只包含什么？
+  - 元素的Element类型的子节点。
+
+```
+let childCount = element.children.length;
+let firstChild = element.children[0];
+```
+
+###  **15.4.2** **contains()**方法 
+
+- contains()方法可以做什么？
+  - 确定一个元素是不是另一个元素的后代
+- contains()方法应该在要哪里调用？
+  - 搜索的祖先元素上
+- contains()方法的参数是什么？
+  - 待确定的目标节点 
+
+```
+console.log(document.documentElement.contains(document.body)); // true
+```
+
+- compareDocumentPosition()方法可以做什么？
+  - 确定节点间的关系。
+
+- compareDocumentPosition()方法会返回什么？
+  - 表示两个节点关系的位掩码
+
+![image-20220408161449695](第 15 章 DOM扩展.assets/image-20220408161449695.png)
+
+- 如何根据compareDocumentPosition()方法的结果
+
+  确定参考节点是否包含传入的节点？
+
+  - 按位与
+
+```
+let result = document.documentElement.compareDocumentPosition(document.body);
+
+console.log(!!(result & 0x10));
+```
+
+### **15.4.3** 插入标记
+
+#### \01. **innerText**属性
+
+- innerText属性包含什么？
+  - 对应元素中包含的所有文本内容，
+  - 无论文本在子树中哪个层级。
+- 在用于读取值时，innerText会按照顺序？
+  - 深度优先
+- innerText怎么处理文本节点的值？
+  - 将子树中所有文本节点的值拼接起来。
+- 在用于写入值时，innerText会执行什么操作？
+  - 移除元素的所有后代
+  - 并插入一个包含该值的文本节点
+
+```
+<div id="content">
+  <p>This is a <strong>paragraph</strong> with a list following it.</p>
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+  </ul>
+</div>
+
+```
+
+- innerText属性会返回以下字符串：
+
+```
+This is a paragraph with a list following it. 
+Item 1 
+Item 2 
+Item 3
+```
+
+```
+div.innerText = "Hello world!";
+```
+
+```
+<div id="content">Hello world!</div>
+```
+
+- 设置innerText是否会怎么处理字符串中的HTML语法字符
+
+  （小于号、大于号、引号及和号）？
+
+  - 编码
+
+```
+div.innerText = "Hello & welcome, <b>\"reader\"!</b>";
+```
+
+```
+<div id="content">Hello &amp; welcome, &lt;b&gt;&quot;reader&quot;!&lt;/b&gt;</div>
+```
+
+- 设置innerText能在容器元素中生成多少个文本节点？
+  - 只能生成一个
+- 如何利用innerText去除HTML标签？
+  - 将innerText设置为等于innerText，
+    - 此时只剩文本 
+
+```
+div.innerText = div.innerText;
+```
+
+- 取得和设置文本内容的首选方法是什么？
+  - innerText
+
+#### \02. **outerText**属性
+
+- 利用outerText读取文本值时，outerText返回什么？
+  - 与innerText同样的内容。
+- outerText写入文本值时会执行什么操作？
+  - 移除所有后代节点，
+  - 替换整个元素。
+
+```
+div.outerText = "Hello world!";
+```
+
+```
+let text = document.createTextNode("Hello world!");
+
+div.parentNode.replaceChild(text, div);
+```
+
+- outerText是否是一个标准的属性？
+  - 非标准
+  - 不推荐使用
+
+### **15.4.4** 滚动
+
+- scrollIntoViewIfNeeded(alingCenter)会做什么？
+  - 在元素不可见的情况下，
+    - 将其滚动到窗口或包含窗口中，
+    - 使其可见；
+  - 如果已经在视口中可见，
+    - 则什么也不做。
+  - 如果将可选的参数alingCenter设置为true，
+    - 则浏览器会将其放在视口中央。
+- 哪些浏览器实现了这个方法？
+  - Safari
+  - Chrome
+  - Opera
+
+```
+// 如果不可见，则将元素可见 document.images[0].scrollIntoViewIfNeeded();
+```
+
+- 为什么更推荐scrollIntoView()？
+  - 因为所有浏览器都支持
+
+## **15.5** 小结
+
+- **Selectors API**
+
+  - 基于CSS选择符
+
+    获取DOM元素：
+
+    - querySelector()、
+    - querySelectorAll()
+    - matches()。 
+
+- **Element Traversal**
+
+  - DOM元素的属性，
+
+    以方便对DOM元素进行遍历。
+
+    - 因浏览器处理元素间空格的差异而产生的。 
+
+- **HTML5**的标准DOM扩展。
+  - 标准化，
