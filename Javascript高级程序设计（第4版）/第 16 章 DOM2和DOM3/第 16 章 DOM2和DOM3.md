@@ -323,3 +323,353 @@ let elems = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "*")
 
 - 这些方法很少使用，因为通常都是使用元素来访问属性。
 
+### **16.1.2** 其他变化
+
+#### \01. **DocumentType**的变化 
+
+- publicId、systemId属性表示什么？
+
+  - 文档类型声明中有效
+
+    但无法使用DOM1 API访问的数据
+
+```
+<!DOCTYPE HTML PUBLIC "-// W3C// DTD HTML 4.01// EN" "http://www.w3.org/TR/html4/strict.dtd">
+```
+
+- 其publicId是"-// W3C// DTD HTML 4.01// EN"，
+- 而systemId是"http://www.w3.org/TR/html4/strict.dtd"。
+
+```
+console.log(document.doctype.publicId); console.log(document.doctype.systemId);
+```
+
+- 通常在网页中很少需要访问这些信息。 
+
+- internalSubset用于什么？
+  - 访问文档类型声明中可能包含的额外定义
+
+```
+<!DOCTYPE html PUBLIC "-// W3C// DTD XHTML 1.0 Strict// EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" [<!ELEMENT name (#PCDATA)>] >
+```
+
+- document.doctype.internalSubset会返回什么？
+
+  - " \<!ELEMENT name (#PCDATA)>"。
+
+- HTML文档中几乎不会涉及文档类型的内部子集，
+
+  XML文档中稍微常用一些
+
+#### \02. **Document**的变化 
+
+- importNode()方法用于什么？
+
+  - 从其他文档获取一个节点
+
+    并导入到新文档，
+
+    以便将其插入新文档
+
+- 每个节点都有一个ownerDocument属性，表示什么？
+
+  - 所属文档。
+
+- 如果调用appendChild()方法时传入节点的ownerDocument不是指向当前文档，则会导致什么？
+
+  - 发生错误。
+
+- 调用importNode()导入其他文档的节点会返回什么？
+
+  - 一个新节点
+
+  - 这个新节点的ownerDocument属性是正确的。 
+
+- importNode()方法接收什么参数？
+  - 要复制的节点
+  - 表示是否同时复制子树的布尔值，
+- importNode()方法返回什么？
+  - 适合在当前文档中使用的新节点。
+
+```
+// 导入节点及所有后代 
+let newNode = document.importNode(oldNode, true); document.body.appendChild(newNode);
+```
+
+- defaultView属性是什么？
+  - 指向拥有当前文档的窗口（或窗格\<frame>）的指针。
+
+```
+let parentWindow = document.defaultView || document.parentWindow;
+```
+
+- document.implementation对象两个方法：
+  - createDocumentType()
+  - createDocument()。
+- createDocumentType()用于什么？
+  - 创建DocumentType类型的新节点
+- createDocumentType()接收什么参数？
+  - 文档类型名称、
+  - publicId
+  - systemId
+
+```
+let doctype = document.implementation.createDocumentType("html", "-// W3C// DTD HTML 4.01// EN", "http://www.w3.org/TR/html4/strict.dtd");
+```
+
+- createDocumentType()只在什么时候才会用到？
+  - 创建新文档
+    - 因为已有文档的文档类型不可更改
+- 如何创建新文档？
+  - 使用createDocument()方法。
+- createDocument()接收什么参数？
+  - 文档元素的namespaceURI
+  - 文档元素的标签名
+  - 文档类型
+
+```
+let doc = document.implementation.createDocument("", "root", null);
+```
+
+- 这个空文档没有命名空间和文档类型，
+
+  只指定了\<root>作为文档元素
+
+- 如何创建一个XHTML文档
+
+```
+let doctype = document.implementation.createDocumentType("html", "-// W3C// DTD XHTML 1.0 Strict// EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"); 
+
+let doc = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", doctype);
+```
+
+- document.implamentation对象
+
+  createHTMLDocument()方法
+
+- createHTMLDocument()方法可以做什么？
+  - 创建一个完整的HTML文档，
+  - 包含\<html>、\<head>、\<title>和\<body>元素。
+- createHTMLDocument()接收什么参数？
+  - 新创建文档的标题（放到\<title>元素中）
+- createHTMLDocument()返回什么？
+  - 一个新的HTML文档。
+
+```
+let htmldoc = document.implementation.createHTMLDocument("New Doc"); 
+
+console.log(htmldoc.title); // "New Doc" console.log(typeof htmldoc.body); // "object"
+```
+
+- createHTMLDocument()方法创建的对象是什么实例？
+  - HTMLDocument类型的实例，
+  - 因此包括该类型所有相关的方法和属性，
+    - 包括title和body属性。 
+
+#### \03. **Node**的变化
+
+- isSameNode()和isEqualNode()接收什么参数？
+
+  - 一个节点
+
+- 如果这个节点与参考节点相同或相等，则返回什么？
+
+  - true
+
+- 节点相同，意味着什么？
+
+  - 引用同一个对象
+
+- 节点相等，意味着什么？
+
+  - 节点类型相同，
+  - 拥有相等的属性（nodeName、nodeValue等），
+  - attributes和childNodes也相等 
+
+  （即同样的位置包含相等的值）
+
+```
+let div1 = document.createElement("div");
+
+div1.setAttribute("class", "box");
+
+let div2 = document.createElement("div");
+
+div2.setAttribute("class", "box");
+
+
+
+console.log(div1.isEqualNode(div2)); // true 
+
+console.log(div1.isSameNode(div2)); // false
+```
+
+- setUserData()方法接收什么参数？
+  - 键
+  - 值
+  - 处理函数，
+- setUserData()用于什么？
+  - 给节点追加数据
+
+- 如何把数据添加到一个节点？
+
+```
+document.body.setUserData("name", "Nicholas", function() {});
+```
+
+- 如何再取得这个信息？
+  - 通过相同的键
+
+```
+let value = document.body.getUserData("name")
+```
+
+- setUserData()的处理函数会在什么时候执行？
+
+  - 包含数据的节点
+
+    被复制、删除、重命名或导入其他文档的时候
+
+- 处理函数接收什么参数？
+
+  - 表示操作类型的数值
+    - 1代表复制，
+    - 2代表导入，
+    - 3代表删除，
+    - 4代表重命名
+  - 数据的键、
+  - 数据的值、
+  - 源节点
+  - 目标节点
+
+- 处理函数删除节点时，源节点为什么？
+
+  - null
+
+- 除复制外，目标节点都为什么？
+
+  - null。
+
+```
+let div = document.createElement("div");
+
+div.setUserData("name", "Nicholas", function (operation, key, value, src, dest) {
+    if (operation == 1) {
+        dest.setUserData(key, value, function () {});
+    }
+});
+
+let newDiv = div.cloneNode(true);
+
+console.log(newDiv.getUserData("name")); // "Nicholas"
+```
+
+#### \04. 内嵌窗格的变化 
+
+- 给HTMLIFrameElement（即\<iframe>，内嵌窗格）类型 
+
+  属性contentDocument
+
+- contentDocument属性包含什么？
+
+  - 代表子内嵌窗格中内容的document对象的指针
+
+```
+let iframe = document.getElementById("myIframe"); let iframeDoc = iframe.contentDocument;
+```
+
+- contentDocument属性是什么的实例？
+  - Document
+  - 拥有所有文档属性和方法
+    - 可以像使用其他HTML文档一样使用它。
+- 属性contentWindow返回什么？
+  - 相应窗格的window对象，
+    - 这个对象上有一个document属性
+
+- 跨源访问子内嵌窗格的document对象会有什么问题？
+  - 受到安全限制
+
+- 如果内嵌窗格中加载了不同域名（或子域名）的页面，
+
+  或者该页面使用了不同协议，
+
+  则访问其document对象会发生什么？
+
+  - 抛出错误。
+
+## **16.2** 样式 
+
+- HTML中的样式有3种定义方式？
+  - 外部样式表（通过\<link>元素）
+  - 文档样式表（使用\<style>元素）
+  - 元素特定样式（使用style属性）
+
+### **16.2.1** 存取元素样式 
+
+- style属性是什么类型的实例？
+
+  - CSSStyleDeclaration
+
+    - 包含通过HTML style属性
+
+      为元素设置的所有样式信息，
+
+    - 但不包含从文档样式和外部样式中继承来的样式。
+
+- CSS属性名使用什么表示法？
+
+  - 连字符
+  - （如background-image）
+
+- 在JavaScript中CSS属性必须转换为什么形式？
+
+  - 驼峰大小写
+  - （如 backgroundImage）
+
+- 常用的CSS属性与style对象中等价属性
+
+![image-20220410214004628](第 16 章 DOM2和DOM3.assets/image-20220410214004628.png)
+
+- 有一个CSS属性名不能直接转换？
+  - float。
+  - 因为float是JavaScript的保留字
+  - 它在style对象中对应的属性应该是cssFloat。
+
+```
+let myDiv = document.getElementById("myDiv");
+
+// 设置背景颜色 
+myDiv.style.backgroundColor = "red";
+
+// 修改大小
+myDiv.style.width = "100px";
+myDiv.style.height = "200px";
+
+// 设置边框 
+myDiv.style.border = "1px solid black";
+```
+
+- 所有尺寸是否必须包含单位？
+  - 在标准模式下，必须包含单位
+  - 在混杂模式下，可以把style.width设置为"20"
+- 如果是在标准模式下，把style.width设置为"20"会怎么样？
+  - 被忽略，
+  - 因为没有单位。
+- 实践中， 最好一直加上单位。 
+
+```
+<div id="myDiv" style="background-color: blue; width: 10px; height: 25px"></div>
+```
+
+ 
+
+```
+console.log(myDiv.style.backgroundColor); // "blue" 
+
+console.log(myDiv.style.width); // "10px"
+
+console.log(myDiv.style.height); // "25px"
+```
+
+- 如果元素上没有style属性，则style对象包含什么？
+  - 所有可能的CSS属性的空值。
