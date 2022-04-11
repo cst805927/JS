@@ -853,10 +853,336 @@ console.log(computedStyle.border); // "1px solid black"（在某些浏览器中�
 
 - 在所有浏览器中计算样式是否只读？
   - 是 
-
 - 是否能修改getComputedStyle()方法返回的对象？
   - 不能
 - 是否有默认值的CSS属性出现在计算样式里？
   - 是
   - 因为计算样式包含浏览器内部样式表
-- 
+
+### **16.2.2** 操作样式表
+
+- CSSStyleSheet类型表示什么？
+  - CSS样式表，
+- \<link>元素是什么类型？
+  - HTMLLinkElement
+- \<style>元素是什么类型？
+  - HTMLStyleElement
+
+- CSSStyleSheet类型是一个什么类型？
+  - 通用样式表类型，
+  - 可以表示在HTML中定义的样式表
+
+- CSSStyleSheet类型的实例则是否只读？
+  - 是
+
+- CSSStyleSheet类型继承什么？
+  - StyleSheet
+- StyleSheet可用作什么？
+  - 非CSS样式表的基类
+
+- CSSStyleSheet从StyleSheet继承的属性？ 
+
+  - disabled
+    - 布尔值
+    - 表示样式表是否被禁用
+      - 可读写的
+      - 设置为true会禁用
+
+  - href
+    - 如果使用\<link>
+      - 则返回URL
+    - 否则返回null。 
+
+  - media
+
+    - 支持的媒体类型集合
+
+    - 如果样式表可用于所有媒体
+      - 返回空列表
+
+  - ownerNode
+
+    - 指向拥有当前样式表的节点，
+
+      - \<link> 
+
+      - \<style>
+
+    - 如果是通过@import导入
+      - 则为null。
+
+  - parentStyleSheet，
+    - 如果是通过@import导入
+      - 则指向导入它的样式表。 
+
+  - title
+    - ownerNode的title属性。 
+
+  - type
+    - 字符串
+    - 表示样式表的类型
+    - 对CSS样式表来说，就是"text/css"。
+
+- 除了disabled，其他属性都是只读的。
+
+- CSSStyleSheet类型还支持哪些属性和方法? 
+
+  - cssRules
+    - 样式规则集合
+
+  - ownerRule
+
+    - 如果是使用@import导入
+      - 则指向导入规则； 
+
+    - 否则为null。 
+
+  - deleteRule(*index*)，
+    - 在指定位置删除cssRules中的规则
+
+  - insertRule(*rule*, *index*)，
+    - 在指定位置向cssRules中插入规则
+
+- document.styleSheets表示什么？
+  - 文档中可用的样式表集合。
+- document.styleSheets集合的length属性保存什么？
+  - 文档中样式表的数量
+  - 样式表使用中括号或item()方法获取。
+
+```
+let sheet = null;
+
+for (let i = 0, len = document.styleSheets.length; i < len; i++) {
+    
+    sheet = document.styleSheets[i];
+    
+	console.log(sheet.href);
+}
+
+```
+
+- 通过\<link>或\<style>元素
+
+  是否可以获取CSSStyleSheet对象？
+
+  - 可以
+
+  - DOM在这两个元素上暴露了sheet属性，
+
+    其中包含对应的CSSStyleSheet对象。 
+
+#### \01. **CSS**规则 
+
+- CSSRule类型表示什么？
+  - 样式表中的一条规则。
+- 这个类型也是一个什么类型？
+  - 通用基类，
+  - 很多类型都继承它，包括CSSStyleRule
+
+- CSSStyleRule对象上可用的属性？
+
+  - cssText
+    - 返回整条规则的文本
+
+  - parentRule
+
+    - 如果这条规则被其他规则（如@media）包含
+      - 则指向包含规则
+
+    - 否则就是null 
+
+  - parentStyleSheet
+    - 包含当前规则的样式表
+
+  - selectorText
+    - 返回规则的选择符文本
+
+  - style
+    - 返回CSSStyleDeclaration对象，
+    - 可以设置和获取当前规则中的样式。 
+
+  - type
+    - 数值常量
+    - 表示规则类型
+    - 对于样式规则，它始终为1。 
+
+- CSSStyleRule.cssText和style.cssText的区别？
+  - 是否只读 
+    - CSSStyleRule.cssText只读
+    - style.cssText可重写
+  - 包含的内容
+    - CSSStyleRule.cssText包含
+      - 选择符文本
+      - 样式声明
+      - 大括号
+    - style.cssText包含
+      - 样式声明
+
+```
+div.box { 
+    background-color: blue; 
+    width: 100px; 
+    height: 200px; 
+}
+```
+
+- 下列代码可以获取它的所有信息：
+
+```
+let sheet = document.styleSheets[0];
+
+let rules = sheet.cssRules || sheet.rules; // 取得规则集合
+
+let rule = rules[0]; // 取得第一条规则
+
+console.log(rule.selectorText); // "div.box" 
+
+console.log(rule.style.cssText); // 完整的CSS代码 
+
+console.log(rule.style.backgroundColor); // "blue" 
+
+console.log(rule.style.width); // "100px" 
+
+console.log(rule.style.height); // "200px"
+```
+
+- 修改规则中的样式，
+
+```
+let sheet = document.styleSheets[0];
+
+let rules = sheet.cssRules || sheet.rules; // 取得规则集合 
+
+let rule = rules[0]; // 取得第一条规则 
+
+rule.style.backgroundColor = "red"
+
+```
+
+#### \02. 创建规则 
+
+- 如何向样式表中添加新规则？
+  - 使用insertRule()方法
+- insertRule()方法接收什么参数？
+  - 规则的文本
+  - 插入位置
+
+```
+sheet.insertRule("body { background-color: silver }", 0); // 使用DOM方法
+```
+
+- 更好的方式是使用第14章介绍的动态样式加载技术
+
+#### \03. 删除规则 
+
+- 如何从样式表中删除规则？
+  - deleteRule()
+- deleteRule()接收什么参数？
+  - 索引
+- 如何删除样式表中的第一条规则？
+
+```
+sheet.deleteRule(0); // 使用DOM方法
+```
+
+### **16.2.3** 元素尺寸 
+
+#### \01. 偏移尺寸
+
+- 哪些属性用于取得元素的偏移尺寸？
+
+  - offsetHeight
+    - 元素在垂直方向上的像素尺寸，
+    - 包括
+      - 元素高度、
+      - 水平滚动条高度（如果可见）
+      - 上、下边框的高度 
+
+  - offsetLeft
+    - 元素左边框外侧距离
+
+  - offsetTop
+    - 元素上边框外侧距离
+
+  - offsetWidth
+    - 元素在水平方向上的像素尺寸
+    - 包括
+      - 它的宽度
+      - 垂直滚动条宽度（如果可见）
+      - 左、右边框的宽度。 
+
+- offsetLeft和offsetTop是相对于什么的？
+  - 包含元素的
+- 包含元素保存在什么属性中？
+  - offsetParent
+
+- offsetParent是否一定是parentNode？
+
+  - 不一定
+
+- \<td>元素的offsetParent是什么？
+
+  - 作为其祖先的\<table>元素，
+
+  - 因为\<table>是节点层级中
+
+    第一个提供尺寸的元素。
+
+- 图展示了这些属性代表的不同尺寸
+
+![image-20220411170154210](第 16 章 DOM2和DOM3.assets/image-20220411170154210.png)
+
+- 如何确定一个元素在页面中的偏移量？
+
+  - 把它的offsetLeft和offsetTop属性
+
+    分别与offsetParent的相同属性相加
+
+    一直加到根元素
+
+```
+function getElementLeft(element) {
+    let actualLeft = element.offsetLeft;
+    
+    let current = element.offsetParent;
+    
+    while (current !== null) {
+        
+        actualLeft += current.offsetLeft;
+        
+		current = current.offsetParent;
+    }
+    
+	return actualLeft;
+}
+function getElementTop (element) {
+    
+    let actualTop = element.offsetTop;
+    
+    let current = element.offsetParent;
+    
+    while (current !== null) {
+        
+        actualTop += current.offsetTop;
+        
+		current = current.offsetParent;
+    }
+    
+	return actualTop;
+}
+
+```
+
+- 一般来说，包含在\<div>元素中所有元素
+
+  的offsetParent是什么？
+
+  - \<body>
+
+  - 因此getElementleft()和getElementTop()返回的值
+
+    与offsetLeft和offsetTop返回的值相同
+
+- 所有这些偏移尺寸属性是否只读？
+  - 是
+  - 每次访问都会重新计算。

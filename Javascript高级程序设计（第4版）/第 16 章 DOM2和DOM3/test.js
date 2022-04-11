@@ -1,11 +1,29 @@
-let myDiv = document.getElementById("myDiv");
-
-let computedStyle = document.defaultView.getComputedStyle(myDiv, null);
-
-console.log(computedStyle.backgroundColor); // "red" 
-
-console.log(computedStyle.width); // "100px" 
-
-console.log(computedStyle.height); // "200px" 
-
-console.log(computedStyle.border); // "1px solid black"（在某些浏览器中）
+function getElementLeft(element) {
+    let actualLeft = element.offsetLeft;
+    
+    let current = element.offsetParent;
+    
+    while (current !== null) {
+        
+        actualLeft += current.offsetLeft;
+        
+		current = current.offsetParent;
+    }
+    
+	return actualLeft;
+}
+function getElementTop (element) {
+    
+    let actualTop = element.offsetTop;
+    
+    let current = element.offsetParent;
+    
+    while (current !== null) {
+        
+        actualTop += current.offsetTop;
+        
+		current = current.offsetParent;
+    }
+    
+	return actualTop;
+}
