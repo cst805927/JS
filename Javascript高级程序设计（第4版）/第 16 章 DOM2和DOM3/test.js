@@ -1,5 +1,11 @@
-console.log(myDiv.style.backgroundColor); // "blue" 
+let myDiv = document.getElementById("myDiv");
 
-console.log(myDiv.style.width); // "10px"
+let computedStyle = document.defaultView.getComputedStyle(myDiv, null);
 
-console.log(myDiv.style.height); // "25px"
+console.log(computedStyle.backgroundColor); // "red" 
+
+console.log(computedStyle.width); // "100px" 
+
+console.log(computedStyle.height); // "200px" 
+
+console.log(computedStyle.border); // "1px solid black"（在某些浏览器中）

@@ -15,17 +15,21 @@
     为节点增加方法和属性。
 
 - **DOM Views**：
+  
   - 定义基于样式信息的不同视图。 
-
+  
 - **DOM Events**：
+  
   - 定义通过事件实现DOM文档交互。 
-
+  
 - **DOM Style**：
+  
   - 定义以编程方式访问和修改CSS样式的接口。 
-
+  
 - **DOM Traversal and Range**：
+  
   - 新增遍历DOM文档及选择文档内容的接口。 
-
+  
 - **DOM HTML**：
 
   - 在DOM1 HTML部分的基础上，
@@ -484,7 +488,7 @@ console.log(htmldoc.title); // "New Doc" console.log(typeof htmldoc.body); // "o
 
   - 节点类型相同，
   - 拥有相等的属性（nodeName、nodeValue等），
-  - attributes和childNodes也相等 
+  - childNodes也相等 
 
   （即同样的位置包含相等的值）
 
@@ -526,7 +530,7 @@ let value = document.body.getUserData("name")
 
 - setUserData()的处理函数会在什么时候执行？
 
-  - 包含数据的节点
+  - 节点
 
     被复制、删除、重命名或导入其他文档的时候
 
@@ -673,3 +677,186 @@ console.log(myDiv.style.height); // "25px"
 
 - 如果元素上没有style属性，则style对象包含什么？
   - 所有可能的CSS属性的空值。
+
+#### \01. **DOM**样式属性和方法
+
+- style对象属性和方法
+
+  - cssText
+    - CSS代码 
+
+  - length
+    - CSS属性数量 
+
+  - parentRule
+    - CSSRule对象
+
+  - getPropertyCSSValue(*propertyName*)，
+    - （已废弃）。 
+
+  - getPropertyPriority(*propertyName*)，
+    - 如果使用了!important
+      - 则返回"important"，
+    - 否则返回空字符串。 
+
+  - getPropertyValue(*propertyName*)，
+    - 返回属性的字符串值。 
+
+  - item(*index*)，
+    - 返回索引为*index*的CSS属性名。 
+
+  - removeProperty(*propertyName*)，
+    - 删除CSS属性
+
+  - setProperty(*propertyName, value, priority*)，
+
+    - 设置CSS属性
+
+      - 值为value
+
+      - priority是"important"或空字符串
+
+- cssText属性可以做什么？
+  - 存取CSS代码。
+- 在读模式下，cssText返回什么？
+  - CSS代码
+- 在写模式下，cssText执行什么操作？
+  - 重写style属性的值
+
+```
+myDiv.style.cssText = "width: 25px; height: 100px; background-color: green"; 
+
+console.log(myDiv.style.cssText);
+```
+
+- style对象如何取得相应位置的CSS属性名？
+  - 中括号
+  - item()
+
+```
+for (let i = 0, len = myDiv.style.length; i < len; i++) {
+    console.log(myDiv.style[i]);
+    // 或者用myDiv.style.item(i)
+}
+```
+
+- 如何根据属性名取得属性的值？
+  - getPropertyValue()
+
+```
+let prop, value, i, len;
+for (i = 0, len = myDiv.style.length; i < len; i++) {
+    prop = myDiv.style[i];
+    // 或者用myDiv.style.item(i) 
+    
+    value = myDiv.style.getPropertyValue(prop);
+    console.log(`prop: ${value}`);
+}
+```
+
+- getPropertyValue()方法返回什么？
+  - CSS属性值的字符串表示。
+- 如何获取CSSValue对象？
+  - getPropertyCSSValue() 
+
+- CSSValue对象有两个属性？
+  - cssText
+  - cssValueType
+- cssValueType是什么？
+  - 一个数值常量， 
+  - 表示当前值的类型
+    - 0代表继承的值
+    - 1代表原始值
+    - 2代表列表
+    - 3 代表自定义值
+
+```
+let prop, value, i, len;
+for (i = 0, len = myDiv.style.length; i < len; i++) {
+    prop = myDiv.style[i];
+    // alternately, myDiv.style.item(i)
+    
+    value = myDiv.style.getPropertyCSSValue(prop);
+    
+    console.log(`prop: ${value.cssText} (${value.cssValueType})`);
+}
+```
+
+- removeProperty()方法用于什么？
+  - 删除CSS属性 
+
+- 删除属性意味着会应用什么？
+  - 该属性的默认样式
+
+```
+myDiv.style.removeProperty("border");
+```
+
+#### \02. 计算样式
+
+- document.defaultView上增加了 
+
+  getComputedStyle()方法。
+
+- getComputedStyle()方法接收两个参数？
+
+  - 要计算样式的元素
+  - 伪元素字符串
+
+- 如果不需要查询伪元素，则第二个参数可以传什么？
+
+  - null
+
+- getComputedStyle()方法返回什么？
+
+  - 一个CSSStyleDeclaration对象
+    - 包含元素的计算样式
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Computed Styles Example</title>
+    <style type="text/css">
+      #myDiv {
+        background-color: blue;
+        width: 100px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="myDiv"
+      style="background-color: red; border: 1px solid black"
+    ></div>
+  </body>
+</html>
+
+```
+
+- 如何从div元素获取了计算样式？
+
+```
+let myDiv = document.getElementById("myDiv");
+
+let computedStyle = document.defaultView.getComputedStyle(myDiv, null);
+
+console.log(computedStyle.backgroundColor); // "red" 
+
+console.log(computedStyle.width); // "100px" 
+
+console.log(computedStyle.height); // "200px" 
+
+console.log(computedStyle.border); // "1px solid black"（在某些浏览器中）
+```
+
+- 在所有浏览器中计算样式是否只读？
+  - 是 
+
+- 是否能修改getComputedStyle()方法返回的对象？
+  - 不能
+- 是否有默认值的CSS属性出现在计算样式里？
+  - 是
+  - 因为计算样式包含浏览器内部样式表
+- 

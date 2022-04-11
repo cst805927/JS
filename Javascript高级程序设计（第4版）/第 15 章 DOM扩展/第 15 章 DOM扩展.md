@@ -824,7 +824,7 @@ document.forms[0].scrollIntoView({ block: 'start' });
 document.forms[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
 ```
 
-- scrollIntoView方法可以用来在页面上发生某个事件时
+- scrollIntoView方法可以在页面上发生某个事件时
 
   做什么？
 
@@ -886,12 +886,12 @@ console.log(!!(result & 0x10));
 #### \01. **innerText**属性
 
 - innerText属性包含什么？
-  - 对应元素中包含的所有文本内容，
+  - 元素中包含的文本内容，
   - 无论文本在子树中哪个层级。
 - 在用于读取值时，innerText会按照顺序？
   - 深度优先
 - innerText怎么处理文本节点的值？
-  - 将子树中所有文本节点的值拼接起来。
+  - 将子树中文本节点的值拼接起来。
 - 在用于写入值时，innerText会执行什么操作？
   - 移除元素的所有后代
   - 并插入一个包含该值的文本节点
