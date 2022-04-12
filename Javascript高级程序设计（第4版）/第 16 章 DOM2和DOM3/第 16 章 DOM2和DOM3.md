@@ -756,31 +756,6 @@ for (i = 0, len = myDiv.style.length; i < len; i++) {
 
 - getPropertyValue()方法返回什么？
   - CSS属性值的字符串表示。
-- 如何获取CSSValue对象？
-  - getPropertyCSSValue() 
-
-- CSSValue对象有两个属性？
-  - cssText
-  - cssValueType
-- cssValueType是什么？
-  - 一个数值常量， 
-  - 表示当前值的类型
-    - 0代表继承的值
-    - 1代表原始值
-    - 2代表列表
-    - 3 代表自定义值
-
-```
-let prop, value, i, len;
-for (i = 0, len = myDiv.style.length; i < len; i++) {
-    prop = myDiv.style[i];
-    // alternately, myDiv.style.item(i)
-    
-    value = myDiv.style.getPropertyCSSValue(prop);
-    
-    console.log(`prop: ${value.cssText} (${value.cssValueType})`);
-}
-```
 
 - removeProperty()方法用于什么？
   - 删除CSS属性 
@@ -938,15 +913,15 @@ console.log(computedStyle.border); // "1px solid black"（在某些浏览器中�
     - 否则为null。 
 
   - deleteRule(*index*)，
-    - 在指定位置删除cssRules中的规则
+    - 删除cssRules中的规则
 
   - insertRule(*rule*, *index*)，
-    - 在指定位置向cssRules中插入规则
+    - 向cssRules中插入规则
 
 - document.styleSheets表示什么？
-  - 文档中可用的样式表集合。
+  - 可用的样式表集合。
 - document.styleSheets集合的length属性保存什么？
-  - 文档中样式表的数量
+  - 样式表的数量
   - 样式表使用中括号或item()方法获取。
 
 ```
@@ -982,7 +957,7 @@ for (let i = 0, len = document.styleSheets.length; i < len; i++) {
 - CSSStyleRule对象上可用的属性？
 
   - cssText
-    - 返回整条规则的文本
+    - 整条规则的文本
 
   - parentRule
 
@@ -1186,3 +1161,108 @@ function getElementTop (element) {
 - 所有这些偏移尺寸属性是否只读？
   - 是
   - 每次访问都会重新计算。
+
+#### \02. 客户端尺寸
+
+- 元素的客户端尺寸包含什么？
+  - 元素内容
+  - 内边距所占用的空间。
+- 客户端尺寸只有两个相关属性？
+  - clientWidth
+    - 内容区宽度加左、右内边距宽度
+  - clientHeight
+    - 内容区高度加上、下内边距高度
+
+![image-20220411205505284](第 16 章 DOM2和DOM3.assets/image-20220411205505284.png)
+
+- 客户端尺寸是否包含滚动条占用的空间？
+
+  - 不包含
+  - 因为客户端尺寸是元素内部的空间
+
+- clientWidth、clientHeight属性最常用于什么？
+
+  - 确定浏览器视口尺寸，
+
+  - 即检测document.documentElement的
+
+    clientWidth和clientHeight。
+
+    - 表示视口（\<html>或\<body>元素）的尺寸。
+
+- 客户端尺寸是否只读？
+  - 是
+  - 每次访问都会重新计算。
+
+#### \03. 滚动尺寸
+
+- 滚动尺寸提供了什么信息？
+  - 元素内容滚动距离，
+- \<html>是否需要代码实现滚动？
+  - 不需要
+- 其他元素则需要使用什么令其滚动？
+  - CSS的overflow属性
+
+- 滚动尺寸相关的属性有如下4个？
+
+  - scrollHeight，
+
+    - 没有滚动条出现时，
+
+      元素内容的总高度。 
+
+  - scrollLeft，
+    - 内容区左侧隐藏的像素数，
+    - 设置这个属性可以改变滚动位置。 
+
+  - scrollTop，
+    - 内容区顶部隐藏的像素数，
+    - 设置这个属性可以改变滚动位置。 
+
+  - scrollWidth，
+
+    - 没有滚动条出现时，
+
+      元素内容的总宽度。 
+
+![image-20220411210145028](第 16 章 DOM2和DOM3.assets/image-20220411210145028.png)
+
+- scrollWidth和scrollHeight可以用来做什么？
+  - 确定元素内容的实际尺寸。
+
+- scrollWidth等于什么？
+  - 文档内容的宽度
+- clientWidth等于什么？
+  - 视口的宽度
+
+- scrollLeft和scrollTop属性可以用于什么？
+
+  - 确定滚动的位置
+  - 设置滚动位置。
+
+- 如何检测元素是不是位于顶部，
+
+  如果不是则把它滚动回顶部？
+
+```
+function scrollToTop(element) {
+    if (element.scrollTop != 0) {
+        element.scrollTop = 0;
+    }
+}
+```
+
+#### \04. 确定元素尺寸
+
+- getBoundingClientRect()方法返回什么？ 
+  - 一个DOMRect对象，
+
+- DOMRect对象包含什么属性？
+  - left、
+  - top、
+  - right、
+  - bottom、
+  - height
+  - width
+
+![image-20220411210800669](第 16 章 DOM2和DOM3.assets/image-20220411210800669.png)
