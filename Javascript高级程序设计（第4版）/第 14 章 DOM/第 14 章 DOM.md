@@ -1133,17 +1133,13 @@ let hasXmlDom = document.implementation.hasFeature("XML", "1.0");
 
 ```
 
-- 这个例子会在什么过程中输出当前日期和时间？
+- 这个例子会在什么过程中输出？
 
   - 页面加载
 
 - 这意味着会创建一个DOM元素，以后是否可以访问？
 
   - 可以
-
-- 通过write()和writeln()输出的任何HTML
-
-  都会以这种方式来处理。 
 
 - write()和writeln()方法用于什么？
 
@@ -1158,6 +1154,7 @@ let hasXmlDom = document.implementation.hasFeature("XML", "1.0");
 
 - "\</script>"字符串会被解释为什么？
   - 脚本块的结尾
+  
 - 包含"\</script>"字符串会导致什么？
   - 后面的代码不能执行
 
