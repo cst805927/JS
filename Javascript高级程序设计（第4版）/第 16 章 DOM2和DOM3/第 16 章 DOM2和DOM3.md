@@ -1266,3 +1266,478 @@ function scrollToTop(element) {
   - width
 
 ![image-20220411210800669](第 16 章 DOM2和DOM3.assets/image-20220411210800669.png)
+
+## **16.3** 遍历 
+
+NodeIterator和TreeWalker 
+
+- DOM遍历是对DOM结构的什么优先遍历？
+  - 深度
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Example</title>
+  </head>
+  <body>
+    <p><b>Hello</b> world!</p>
+  </body>
+</html>
+
+```
+
+![image-20220412142039950](第 16 章 DOM2和DOM3.assets/image-20220412142039950.png)
+
+![image-20220412142219226](第 16 章 DOM2和DOM3.assets/image-20220412142219226.png)
+
+- 到达文档末尾文本节点后， 
+
+  遍历会在DOM树中反向回溯。
+
+- 第一个访问的节点是什么？
+  - 包含"world!"的文本节点
+- 最后一个访问的节点是什么？
+  - document节点本身
+
+### **16.3.1** **NodeIterator**
+
+- 如何创建NodeIterator类型实例？
+
+  - document.createNodeIterator()
+
+- document.createNodeIterator()接收什么参数？
+
+  - root，
+    - 遍历根节点 
+
+  - whatToShow，
+    - 数值代码，
+    - 表示应该访问哪些节点。 
+
+  - filter，
+    - NodeFilter对象或函数，
+    - 表示是否接收或跳过特定节点。 
+
+  - entityReferenceExpansion，
+
+    - 布尔值，
+
+    - 表示是否扩展实体引用。
+
+      - 这个参数在HTML文档中没有效果，
+
+        因为实体引用永远不扩展
+
+- whatToShow参数是一个什么？
+
+  - 位掩码，
+
+- whatToShow参数中属性常量有哪些？
+
+  - NodeFilter.SHOW_ALL，
+    - 所有节点。 
+
+  - NodeFilter.SHOW_ELEMENT，
+    - 元素节点。 
+
+  - NodeFilter.SHOW_ATTRIBUTE，
+    - 属性节点。
+    - 由于DOM的结构，因此用不上。 
+
+  - NodeFilter.SHOW_TEXT，
+    - 文本节点。 
+
+  - NodeFilter.SHOW_CDATA_SECTION，
+    - CData区块节点。
+    - 不是在HTML页面中使用的。 
+
+  - NodeFilter.SHOW_ENTITY_REFERENCE，
+    - 实体引用节点。
+    - 不是在HTML页面中使用的。 
+
+  - NodeFilter.SHOW_ENTITY，
+    - 实体节点。
+    - 不是在HTML页面中使用的。
+
+  - NodeFilter.SHOW_PROCESSING_INSTRUCTION，
+    - 处理指令节点。
+    - 不是在HTML页面中使用的。 
+
+  - NodeFilter.SHOW_COMMENT，
+    - 注释节点。 
+
+  - NodeFilter.SHOW_DOCUMENT，
+    - 文档节点。 
+
+  - NodeFilter.SHOW_DOCUMENT_TYPE，
+    - 文档类型节点。 
+
+  - NodeFilter.SHOW_DOCUMENT_FRAGMENT，
+    - 文档片段节点。
+    - 不是在HTML页面中使用的。 
+
+  - NodeFilter.SHOW_NOTATION，
+    - 记号节点。
+    - 不是在HTML页面中使用的。 
+
+- whatToShow参数如何组合多个选项？
+  - 按位或
+
+```
+let whatToShow = NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT;
+```
+
+- createNodeIterator()方法的filter参数可以用来做什么？
+  - 指定
+    - 自定义NodeFilter对象，
+    - 一个作为节点过滤器的函数。
+- NodeFilter对象只有一个什么方法？
+  - acceptNode()，
+- 如果给定节点应该访问就返回什么？
+  - NodeFilter.FILTER_ACCEPT，
+  - 否则返回NodeFilter.FILTER_SKIP。
+- 是否可以创建NodeFilter的实例？
+  - 不可以
+  - 因为NodeFilter是一个抽象类型
+- 如何使用filter参数？
+  - 创建包含acceptNode()的对象，
+  - 然后把它传给createNodeIterator()就可以了。
+
+- 如何定义只接收\<p>元素的节点过滤器对象?
+
+```
+let filter = {
+    acceptNode(node) {
+        return node.tagName.toLowerCase() == "p" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+    }
+};
+
+let iterator = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, filter, false);
+```
+
+- filter参数还可以是一个函数
+
+```
+let filter = function (node) {
+    return node.tagName.toLowerCase() == "p" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+};
+let iterator = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, filter, false);
+```
+
+- 如何创建一个遍历所有节点的NodeIterator？
+
+```
+let iterator = document.createNodeIterator(document, NodeFilter.SHOW_ALL, null, false);
+```
+
+- NodeIterator的两个主要方法是什么？
+
+  - nextNode()
+  - previousNode()
+
+- nextNode()方法执行什么操作？
+
+  - 以深度优先前进一步
+
+- previousNode()执行什么操作？
+
+  - 是在遍历中后退一步。
+
+- 第一次调用nextNode()返回什么？
+
+  - 根节点
+
+- 当遍历到达DOM树最后一个节点时，
+
+  nextNode()返回什么？ 
+
+  - null。
+
+- 调用previousNode()返回根节点后，
+
+  再次调用会返回什么？ 
+
+  - null
+
+```
+<div id="div1">
+  <p><b>Hello</b> world!</p>
+  <ul>
+    <li>List item 1</li>
+    <li>List item 2</li>
+    <li>List item 3</li>
+  </ul>
+</div>
+
+```
+
+- 如何遍历\<div>元素内部的所有元素？
+
+```
+let div = document.getElementById("div1");
+
+let iterator = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+let node = iterator.nextNode();
+
+while (node !== null) {
+
+    console.log(node.tagName);
+    
+    // 输出标签名 
+    node = iterator.nextNode();
+}
+```
+
+- 以上代码执行后会输出以下标签名：
+
+```
+DIV 
+P
+B
+UL
+LI
+LI
+LI
+```
+
+- 如何只遍历\<li>元素？
+  - 传入一个过滤器
+
+```
+let div = document.getElementById("div1");
+
+let filter = function (node) {
+
+    return node.tagName.toLowerCase() == "li" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+};
+
+let iterator = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT, filter, false);
+
+let node = iterator.nextNode();
+
+while (node !== null) {
+
+    console.log(node.tagName); // 输出标签名
+    
+    node = iterator.nextNode();
+}
+```
+
+- 修改DOM结构是否会体现在遍历中？
+
+  - 会
+
+  - nextNode()和previousNode()
+
+    共同维护NodeIterator对DOM结构的内部指针
+
+### **16.3.2** **TreeWalker** 
+
+- TreeWalker还添加了哪些
+
+  在DOM结构中向不同方向遍历的方法？、
+
+  - parentNode()，
+    - 遍历到当前节点的父节点。 
+
+  - firstChild()，
+    - 遍历到当前节点的第一个子节点。 
+
+  - lastChild()，
+    - 遍历到当前节点的最后一个子节点。 
+
+  - nextSibling()，
+    - 遍历到当前节点的下一个同胞节点。 
+
+  - previousSibling()，
+    - 遍历到当前节点的上一个同胞节点。 
+
+- 如何创建TreeWalker对象？
+  - document.createTreeWalker()
+
+- document.createTreeWalker()接收什么参数？
+  - 作为遍历起点的根节点、
+  - 要查看的节点类型、
+  - 节点过滤器
+  - 一个表示是否扩展实体引用的布尔值。
+
+```
+let div = document.getElementById("div1");
+let filter = function (node) {
+    return node.tagName.toLowerCase() == "li" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+};
+
+let walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, filter, false);
+
+let node = iterator.nextNode();
+
+while (node !== null) {
+    console.log(node.tagName); // 输出标签名 
+    node = iterator.nextNode();
+}
+```
+
+- 节点过滤器（filter）除了可以返回 
+
+  NodeFilter.FILTER_ACCEPT和NodeFilter.FILTER_SKIP，
+
+  还可以返回什么？ 
+
+  - NodeFilter.FILTER_REJECT。
+
+- NodeFilter.FILTER_REJECT表示什么？
+  - 跳过该节点以及该节点的整个子树
+
+```
+let div = document.getElementById("div1");
+
+let walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, null, false);
+
+walker.firstChild(); // 前往<p> 
+
+walker.nextSibling(); // 前往<ul>
+
+let node = walker.firstChild(); // 前往第一个<li> 
+
+while (node !== null) {
+    console.log(node.tagName);
+    node = walker.nextSibling();
+}
+```
+
+- TreeWalker类型currentNode属性，表示什么？
+  - 遍历过程中上一次返回的节点
+
+```
+let node = walker.nextNode();
+
+console.log(node === walker.currentNode); // true 
+
+walker.currentNode = document.body; // 修改起点
+```
+
+## **16.4** 范围 
+
+- 范围可用于什么？
+
+  - 在文档中选择内容，
+
+    而不用考虑节点之间的界限
+
+### **16.4.1 DOM**范围 
+
+- 如何创建一个DOM范围对象？
+  - document.createRange()
+
+```
+let range = document.createRange();
+```
+
+- Range类型的属性？
+
+  - startContainer，
+    - 范围起点所在的节点
+    - （选区中第一个子节点的父节点）。 
+
+  - startOffset，
+
+    - 范围起点在startContainer中的偏移量。
+
+    - 如果startContainer是
+
+      文本节点、注释节点、CData区块节点， 
+
+      - 则startOffset指范围起点之前跳过的字符数；
+      - 否则，表示范围中第一个节点的索引 
+
+  - endContainer，
+    - 范围终点所在的节点
+    - （选区中最后一个子节点的父节点） 
+
+  - endOffset，
+    - 范围起点在startContainer中的偏移量 
+
+  - commonAncestorContainer，
+
+    - 以startContainer和endContainer为后代的
+
+      最深的节点
+
+### **16.4.2** 简单选择
+
+- 如何通过范围选择文档中某个部分？
+
+  - selectNode() 
+
+  - selectNodeContents()
+
+- selectNode() 和selectNodeContents()接收什么参数？
+
+  - 一个节点
+
+- selectNode() 和selectNodeContents()执行什么操作？
+
+  - 将节点的信息
+
+    添加到调用它的范围。
+
+- selectNode()方法选择什么？
+
+  - 整个节点，
+  - 包括其后代节点，
+
+- selectNodeContents()选择什么？
+
+  - 节点的后代
+
+```
+<!DOCTYPE html>
+<html>
+  <body>
+    <p id="p1"><b>Hello</b> world!</p>
+  </body>
+</html>
+
+```
+
+- 如何访问并创建相应的范围？
+
+```
+let range1 = document.createRange(),
+    range2 = document.createRange(),
+    p1 = document.getElementById("p1");
+range1.selectNode(p1);
+range2.selectNodeContents(p1);
+```
+
+- range1包含什么？
+  - \<p>元素
+  - 及其所有后代
+- range2包含什么？
+  - \<b>元素、
+  - 文本节点"Hello"
+  - 文本节点"world!"，
+
+![image-20220412160425427](第 16 章 DOM2和DOM3.assets/image-20220412160425427.png)
+
+- setStartBefore(*refNode*)，
+  - 把范围的起点设置到*refNode*之前，
+  - 让*refNode*成为选区的第一个子节点。 
+
+- setStartAfter(*refNode*)，
+
+  - 把范围的起点设置到*refNode*之后
+
+  - 将*refNode*排除在选区之外，
+  - 让其下一个同胞节点成为选区的第一个子节点。 
+
+- setEndBefore(*refNode*)，
+  - 把范围的终点设置到*refNode*之前
+  - 将*refNode*排除在选区之外、
+  - 让其上一个同胞节点成为选区的最后一个子节点。
+- setEndAfter(*refNode*)，
+  - 把范围的终点设置到*refNode*之后，
+  - 让*refNode*成为选区的最后一个子节点。
+
