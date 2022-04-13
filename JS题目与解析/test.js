@@ -1,5 +1,9 @@
-(function (x) {
-    return (function (y) {
-        console.log(x + y);
-    })(20)
-})(10);
+function isPosterity(ancestor, element) {
+    while (element) {
+        if (element === ancestor) {
+            return true;
+        }
+        element = element.parentNode;
+    }
+    return false;
+}
