@@ -1741,3 +1741,393 @@ range2.selectNodeContents(p1);
   - 把范围的终点设置到*refNode*之后，
   - 让*refNode*成为选区的最后一个子节点。
 
+### **16.4.3** 复杂选择 
+
+- setStart()和setEnd()都接收什么参数？
+  - 参照节点
+  - 偏移量
+
+- 对setStart()来说，参照节点、偏移量会成为什么？
+  - 参照节点
+    - startContainer
+  - 偏移量
+    - startOffset
+
+- setEnd()，参照节点、偏移量会成为什么？
+  - 参照节点
+    - endContainer
+  - 偏移量
+    - endOffset
+
+- 如何使用setStart()和setEnd()
+
+  模拟selectNode()和selectNodeContents()？
+
+```
+let range1 = document.createRange(),
+	range2 = document.createRange(),
+	p1 = document.getElementById("p1"),
+	p1Index = -1,
+	i,
+	len;
+for (i = 0, len = p1.parentNode.childNodes.length; i < len; i++) {
+	if (p1.parentNode.childNodes[i] === p1) {
+		p1Index = i;
+		break;
+	}
+}
+range1.setStart(p1.parentNode, p1Index);
+range1.setEnd(p1.parentNode, p1Index + 1);
+range2.setStart(p1, 0);
+range2.setEnd(p1, p1.childNodes.length);
+
+```
+
+- setEnd()的优点是什么？
+  - 选择节点中的某个部分。 
+
+- 如何选择从"Hello"中的"llo"到"world!"中的"o"的部分？
+  - 取得相关节点的引用
+  - 创建范围，指定其边界
+
+![image-20220413141349896](第 16 章 DOM2和DOM3.assets/image-20220413141349896.png)
+
+```
+let p1 = document.getElementById("p1"),
+	helloNode = p1.firstChild.firstChild,
+	worldNode = p1.lastChild;
+	
+let range = document.createRange();
+
+range.setStart(helloNode, 2);
+
+range.setEnd(worldNode, 3);
+```
+
+### **16.4.4** 操作范围
+
+- 创建范围之后，浏览器会在内部创建什么？
+  - 一个文档片段节点，
+  - 用于包含范围选区中的节点。
+
+- 范围确定缺失的开始和结束标签，从而执行什么操作？
+  - 能
+
+```
+<p><b>He</b><b>llo</b> world!</p>
+```
+
+![image-20220413142206004](第 16 章 DOM2和DOM3.assets/image-20220413142206004.png)
+
+- deleteContents()会执行什么操作？
+  - 删除范围包含的节点
+
+```
+let p1 = document.getElementById("p1"),
+	helloNode = p1.firstChild.firstChild,
+	worldNode = p1.lastChild,
+	range = document.createRange();
+	
+range.setStart(helloNode, 2);
+
+range.setEnd(worldNode, 3);
+
+range.deleteContents();
+
+```
+
+- 执行上面的代码之后，页面中的HTML会变成这样： 
+
+```
+<p><b>He</b>rld!</p>
+```
+
+- extractContents()执行什么操作？
+
+  - 从文档中移除范围选区。
+
+- extractContents()与deleteContents()的区别？
+
+  - extractContents()返回
+
+    范围对应的文档片段。
+
+```
+let p1 = document.getElementById("p1"),
+	helloNode = p1.firstChild.firstChild,
+	worldNode = p1.lastChild,
+	range = document.createRange();
+	
+range.setStart(helloNode, 2);
+
+range.setEnd(worldNode, 3);
+
+let fragment = range.extractContents();
+
+p1.parentNode.appendChild(fragment);
+
+```
+
+```
+<p><b>He</b>rld!</p> 
+<b>llo</b> wo
+```
+
+- cloneContents()执行什么操作？
+  - 创建一个副本
+
+```
+let p1 = document.getElementById("p1"),
+	helloNode = p1.firstChild.firstChild,
+	worldNode = p1.lastChild,
+	range = document.createRange();
+	
+range.setStart(helloNode, 2);
+
+range.setEnd(worldNode, 3);
+
+let fragment = range.cloneContents();
+
+p1.parentNode.appendChild(fragment);
+
+```
+
+- cloneContents()返回什么？
+
+  - 文档片段包含范围中节点的副本，
+
+    而非实际的节点。
+
+```
+<p><b>Hello</b> world!</p> 
+<b>llo</b> wo
+```
+
+### **16.4.5** 范围插入 
+
+- insertNode()执行什么操作？
+
+  - 在范围选区的开始位置
+
+    插入一个节点。
+
+- 如何插入如下HTML？
+
+```
+<span style="color: red">Inserted text</span>
+```
+
+```
+let p1 = document.getElementById("p1"),
+	helloNode = p1.firstChild.firstChild,
+	worldNode = p1.lastChild,
+	range = document.createRange();
+	
+range.setStart(helloNode, 2);
+
+range.setEnd(worldNode, 3);
+
+let span = document.createElement("span");
+
+span.style.color = "red";
+
+span.appendChild(document.createTextNode("Inserted text"));
+
+range.insertNode(span);
+
+```
+
+- surroundContents()执行什么操作？
+  - 插入包含范围的内容
+
+- surroundContents()接收什么参数？
+  - 包含范围内容的节点
+
+- 调用surroundContents()，后台执行什么操作？
+
+  - (1) 提取出范围的内容
+
+  - (2) 在范围文本所在位置插入给定的节点
+
+  - (3) 将范围文本添加到给定节点。 
+
+```
+let p1 = document.getElementById("p1"),
+	helloNode = p1.firstChild.firstChild,
+	worldNode = p1.lastChild,
+	range = document.createRange();
+	
+range.selectNode(helloNode);
+
+let span = document.createElement("span");
+
+span.style.backgroundColor = "yellow";
+
+range.surroundContents(span);
+
+```
+
+```
+<p><b><span style="background-color:yellow">Hello</span></b> world!</p>
+```
+
+- surroundContents()操作什么情况下报错？
+
+  - 范围中包含部分选择的非文节点，
+
+  - 给定的节点是Document、DocumentType或DocumentFragment类型
+
+### **16.4.6** 范围折叠
+
+- 范围折叠是什么？
+
+  - 范围并没有选择文档的任何部分
+
+- 在折叠范围时，位置会被设置为范围与文档交界的地方，
+
+  可能是范围选区的开始处，也可能是结尾处
+
+![image-20220413145513353](第 16 章 DOM2和DOM3.assets/image-20220413145513353.png)
+
+- 如何折叠范围？
+  - collapse()
+- collapse()接收什么参数？
+  - 表示折叠到范围哪一端
+  - 布尔值 
+    - true表示折叠到起点
+    - false表示折叠到终点
+- 如何确定范围是否已经被折叠？
+  - 检测范围的collapsed属性
+
+```
+range.collapse(true); // 折叠到起点 
+
+console.log(range.collapsed); // 输出true
+
+```
+
+- 测试范围是否被折叠，能够帮助确定什么？
+  - 范围中的两个节点是否相邻
+
+```
+<p id="p1">Paragraph 1</p>
+<p id="p2">Paragraph 2</p>
+
+```
+
+```
+let p1 = document.getElementById("p1"),
+	p2 = document.getElementById("p2"),
+	range = document.createRange();
+	
+range.setStartAfter(p1);
+
+range.setStartBefore(p2);
+
+console.log(range.collapsed); // true
+
+```
+
+### **16.4.7** 范围比较
+
+- 如何确定范围之间是否存在公共的边界（起点或终点）？
+
+  - compareBoundaryPoints()
+
+- compareBoundaryPoints()接收什么参数？
+
+  - 要比较的范围
+  - 一个常量值
+    - 表示比较的方式。
+
+- compareBoundaryPoints()常量参数包括什么？
+
+  - Range.START_TO_START（0）
+    - 比较两个范围的起点
+
+  - Range.START_TO_END（1）
+    - 比较第一个范围的起点和第二个范围的终点
+  - Range.END_TO_END（2）
+    - 比较两个范围的终点
+
+  - Range.END_TO_START（3）
+    - 比较第一个范围的终点和第二个范围的起点
+
+- compareBoundaryPoints()方法返回什么？
+  - 在第一个范围的边界点在前面
+    - 返回-1
+  - 在两个范围的边界点相等时
+    - 返回0
+  - 在第一个范围的边界点在后面
+    - 返回1
+
+```
+let range1 = document.createRange();
+let range2 = document.createRange();
+
+let p1 = document.getElementById("p1");
+
+range1.selectNodeContents(p1);
+range2.selectNodeContents(p1);
+
+range2.setEndBefore(p1.lastChild);
+
+console.log(range1.compareBoundaryPoints(Range.START_TO_START, range2)); // 0
+
+console.log(range1.compareBoundaryPoints(Range.END_TO_END, range2)); // 1
+
+```
+
+![image-20220413151104840](第 16 章 DOM2和DOM3.assets/image-20220413151104840.png)
+
+### **16.4.8** 复制范围
+
+- cloneRange()方法执行什么操作？
+  - 创建调用它的范围的副本
+
+```
+let newRange = range.cloneRange();
+```
+
+### **16.4.9** 清理
+
+- 在使用完范围之后，最好做什么？
+
+  - 调用detach()方法
+
+    把范围从文档中剥离。
+
+    以便垃圾回收程序释放内存
+
+```
+range.detach(); // 从文档中剥离范围
+range = null; // 解除引用
+```
+
+## **16.5** 小结
+
+- DOM2 Style模块定义了如何操作元素的样式信息
+- 每个元素都有一个style对象，可用于什么？
+  - 确定和修改元素特定的样式。 
+
+- 如何确定元素的计算样式？
+  - getComputedStyle()方法
+
+- 如何访问文档上所有的样式表？
+  - document.styleSheets
+
+- 如何对DOM树执行深度优先的遍历？
+  - NodeIterator
+  - TreeWalker
+
+- NodeIterator每次只能向前和向后移动一步
+- TreeWalker支持在DOM结构的所有方向移动，
+  - 包括父节点、同胞节点和子节点。 
+
+- 范围是什么？
+  - 选择DOM结构中特定部分
+  - 并进行操作的一种方式。 
+
+- 通过范围的选区可以做什么？
+  - 在保持文档结构完好的同时从文档中移除内容，
+  - 也可复制文档中相应的部分。
