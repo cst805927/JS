@@ -1,9 +1,7 @@
-function isPosterity(ancestor, element) {
-    while (element) {
-        if (element === ancestor) {
-            return true;
-        }
-        element = element.parentNode;
-    }
-    return false;
-}
+document.getElementById("txt").value;
+
+console.log(document.forms[0].txt.value);
+
+document.forms.register.txt.value;
+
+document.forms[0].elements[0].value;
