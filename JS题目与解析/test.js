@@ -1,7 +1,17 @@
-document.getElementById("txt").value;
+let upload = document.getElementById("upload");
 
-console.log(document.forms[0].txt.value);
+upload.addEventListener("change", function () {
 
-document.forms.register.txt.value;
+    let file = this.files[0]; // 获取文件对象
 
-document.forms[0].elements[0].value;
+    let reader = new FileReader(); // 创建FileReader实例
+
+    reader.readAsDataURL(file);
+
+    reader.onload = function (e) {
+
+        // Data URL 格式的文件内容        
+        console.log(this.result);
+    };
+    
+}, false)
