@@ -1807,8 +1807,8 @@ range.setEnd(worldNode, 3);
 ### **16.4.4** 操作范围
 
 - 创建范围之后，浏览器会在内部创建什么？
-  - 一个文档片段节点，
-  - 用于包含范围选区中的节点。
+  - 一个文档片段节点
+    - 用于包含范围选区中的节点
 
 - 范围确定缺失的开始和结束标签，从而执行什么操作？
   - 能
@@ -1968,7 +1968,13 @@ range.surroundContents(span);
 ```
 
 ```
-<p><b><span style="background-color:yellow">Hello</span></b> world!</p>
+<p>
+	<b>
+		<span style="background-color: yellow">Hello</span>
+	</b>
+	world!
+</p>
+
 ```
 
 - surroundContents()操作什么情况下报错？
