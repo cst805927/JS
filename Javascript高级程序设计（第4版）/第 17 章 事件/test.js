@@ -1,7 +1,7 @@
-window.addEventListener("scroll", (event) => {
-	if (document.compatMode == "CSS1Compat") {
-		console.log(document.documentElement.scrollTop);
-	} else {
-		console.log(document.body.scrollTop);
+let textbox = document.getElementById("myText");
+textbox.addEventListener("keypress", (event) => {
+	let identifier = event.key || event.keyIdentifier;
+	if (identifier) {
+		console.log(identifier);
 	}
 });
