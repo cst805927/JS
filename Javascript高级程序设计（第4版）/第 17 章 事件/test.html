@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Related Elements Example</title>
-	</head>
-	<body>
-		<div
-			id="myDiv"
-			style="background-color: red; height: 100px; width: 100px"
-		></div>
-	</body>
-</html>
+<div id="myDiv"><input type="button" value="Click Me" id="myBtn" /></div>
+<script type="text/javascript">
+  let btn = document.getElementById("myBtn");
+  btn.onclick = function () {
+    // 执行操作
+    btn.onclick = null;
+    // 删除事件处理程序
+    document.getElementById("myDiv").innerHTML = "Processing...";
+  };
+</script>
