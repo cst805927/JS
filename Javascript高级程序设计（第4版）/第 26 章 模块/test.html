@@ -1,5 +1,6 @@
-<script src="moduleE.js"></script>
-<script src="moduleD.js"></script>
-<script src="moduleC.js"></script>
-<script src="moduleB.js"></script>
-<script src="moduleA.js"></script>
+// 支持模块的浏览器会执行这段脚本
+ // 不支持模块的浏览器不会执行这段脚本 
+<script type="module" src="module.js"></script>
+ // 支持模块的浏览器不会执行这段脚本
+  // 不支持模块的浏览器会执行这段脚本 
+<script nomodule src="script.js"></script>
